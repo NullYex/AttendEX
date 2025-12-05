@@ -1,132 +1,794 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Attendance System</title>
-    <link rel="stylesheet" href="styl-ui-ofc.css">
+    <title>AttendEX By ArKT | NullYex </title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #0a0a0a;
+            --text-color: #e0e0e0;
+            --text-dim: #888;
+            --accent-green: #2ecc71;
+            --accent-blue: #00e1ff;
+            --accent-red: #e74c3c; 
+            --border-color: #333333;
+            --font-stack: 'JetBrains Mono', monospace; 
+            --radius: 16px;
+            --system-accent-color: var(--accent-green);
+            --cursor-ball-color: var(--accent-blue);
+            --dim-color: rgba(46, 204, 113, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        #custom-cursor {
+            display: none; 
+            position: fixed; top: 0; left: 0;
+            width: 21px; height: 21px;
+            border: 2.39px solid var(--cursor-ball-color); 
+            box-shadow: 0 0 3px var(--cursor-ball-color);
+            background-color: rgba(0, 0, 0, 0); 
+            backdrop-filter: blur(1px);
+            border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform-origin: center center;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            mix-blend-mode: exclusion;
+            will-change: transform; 
+        }
+
+        @media (pointer: fine) {
+            * { cursor: none !important; }
+            #custom-cursor { display: block; }
+            body.hovering #custom-cursor {
+                box-shadow: 0 0 6px var(--cursor-ball-color);
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .container { width: 100%; max-width: 1000px; padding-bottom: 50px; position: relative; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;
+        }
+        .brand { font-size: 2rem; font-weight: bold; letter-spacing: -2px; color: #fff; }
+        .meta-info { font-size: 0.75rem; color: var(--text-dim); text-align: right; line-height: 1.4; }
+
+        .system-status { margin-bottom: 30px; position: relative; }
+        .label {
+            font-size: 0.7rem; color: var(--text-dim); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; font-weight: bold;
+        }
+        
+        .status-bar {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            font-size: 0.9rem; color: var(--text-dim);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 100%;
+            z-index: 500;
+        }
+
+        .status-bar.error {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            background: rgba(231, 76, 60, 0.05);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.1);
+        }
+
+        .status-bar.floating {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 9000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 1px var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        #status-placeholder {
+            height: 50px;
+            display: none; 
+        }
+
+        .blink {
+            animation: blinker 1s step-end infinite;
+            color: var(--system-accent-color); 
+        }
+        .status-bar.error .blink { color: var(--accent-red); }
+        
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 25px; margin-bottom: 20px;
+            transition: all 0.3s ease; position: relative;
+        }
+        .card:hover {
+            border-color: var(--system-accent-color); 
+            background-color: var(--dim-color);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .error-shake {
+            animation: shake 0.4s ease-in-out;
+            border-color: var(--accent-red) !important;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2) !important;
+        }
+
+        .card-header-row {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px; margin-bottom: 15px;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; }
+
+        #copyFlash {
+            font-size: 0.7rem; font-weight: bold; color: #000;
+            background: var(--system-accent-color);
+            padding: 4px 8px; border-radius: 4px;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        #copyFlash.visible { opacity: 1; }
+
+        .search-input {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: var(--text-color); font-family: var(--font-stack);
+            font-size: 0.9rem; padding: 8px 12px; width: 250px; border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            outline: none; border-color: var(--system-accent-color);
+            background: rgba(255,255,255,0.1); width: 280px;
+        }
+        ::placeholder { color: var(--text-dim); opacity: 0.5; }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 15px; margin-bottom: 20px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 15px; text-align: center;
+        }
+        .stat-val { font-size: 1.5rem; font-weight: bold; color: #fff; }
+        .stat-lbl { font-size: 0.7rem; color: var(--text-dim); margin-top: 5px; text-transform: uppercase;}
+
+        .human-list {
+            display: grid; gap: 10px; max-height: 500px; overflow-y: auto; padding-right: 5px;
+        }
+        .human-list::-webkit-scrollbar, .text-output::-webkit-scrollbar { width: 6px; }
+        .human-list::-webkit-scrollbar-track, .text-output::-webkit-scrollbar-track { background: var(--bg-color); }
+        .human-list::-webkit-scrollbar-thumb, .text-output::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        .human-list::-webkit-scrollbar-thumb:hover, .text-output::-webkit-scrollbar-thumb:hover { background: var(--system-accent-color); }
+
+        .human-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; border: 1px solid var(--border-color);
+            border-radius: 12px; background: rgba(255,255,255,0.02);
+            transition: all 0.15s ease-out; cursor: pointer; user-select: none;
+        }
+        .human-item:hover { 
+            background: rgba(255,255,255,0.05); transform: translateX(5px);
+            border-color: var(--system-accent-color);
+        }
+        .human-item:active { transform: scale(0.98); }
+        .human-item.present { border-color: var(--accent-green); background: rgba(46, 204, 113, 0.1); }
+        .human-item.absent { border-color: var(--accent-red); background: rgba(231, 76, 60, 0.1); }
+
+        .human-info { font-size: 0.9rem; }
+        .human-sub { font-size: 0.75rem; color: var(--text-dim); display: block; margin-top: 4px; }
+
+        .status-badge {
+            font-size: 0.75rem; font-weight: bold; padding: 5px 12px;
+            border-radius: 20px; border: 1px solid var(--border-color);
+            color: var(--text-dim); min-width: 80px; text-align: center;
+            background: rgba(0,0,0,0.3);
+        }
+        .human-item.present .status-badge {
+            border-color: var(--accent-green); color: var(--accent-green);
+            background: rgba(46, 204, 113, 0.1); box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+        }
+        .human-item.absent .status-badge {
+            border-color: var(--accent-red); color: var(--accent-red);
+            background: rgba(231, 76, 60, 0.1); box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+        }
+
+        .toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .toggle-chip {
+            background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-dim); padding: 12px; border-radius: 8px;
+            font-size: 0.8rem; font-weight: bold; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
+        }
+        .toggle-chip:hover { background: rgba(255,255,255,0.05); }
+        .toggle-chip.active {
+            background: var(--system-accent-color); border-color: var(--system-accent-color);
+            color: #000; box-shadow: 0 0 15px var(--dim-color);
+        }
+        .toggle-chip .icon { font-size: 1rem; }
+
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
+        .sys-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: var(--text-color); padding: 12px; border-radius: 8px;
+            font-family: var(--font-stack); font-size: 0.8rem; font-weight: bold;
+            cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+        }
+        .sys-btn:hover { border-color: var(--system-accent-color); color: var(--system-accent-color); background: rgba(255,255,255,0.1); }
+        .sys-btn.primary { border-color: var(--system-accent-color); color: var(--system-accent-color); }
+        .sys-btn.primary:hover { background: var(--system-accent-color); color: #000; }
+
+        .upload-area {
+            border: 2px dashed var(--border-color); padding: 30px; text-align: center;
+            border-radius: 12px; cursor: pointer; transition: all 0.3s;
+        }
+        .upload-area:hover { border-color: var(--system-accent-color); background: var(--dim-color); }
+        input[type="file"] { display: none; }
+
+        .text-output {
+            width: 100%; height: 200px; background: #000; border: 1px solid var(--border-color);
+            color: var(--accent-green); font-family: var(--font-stack); font-size: 0.8rem;
+            padding: 20px; resize: none; border-radius: 8px; display: none;
+            line-height: 1.6; margin-top: 20px; 
+        }
+
+        .hidden { display: none !important; }
+
+        footer {
+            margin-top: 50px; padding-top: 20px; border-top: 1px solid var(--border-color);
+            font-size: 0.7rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .team-container::after {
+            content: '█'; margin-left: 5px; animation: blink 1s infinite;
+            color: var(--system-accent-color);
+        }
+        .team-separator { margin: 0 8px; font-weight: bold; }
+        a.social-link { color: inherit; text-decoration: none; margin-left: 15px; transition: color 0.3s; }
+        a.social-link:hover { color: var(--system-accent-color); }
+
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; }
+        .subject-btn { padding: 8px; font-size: 0.75rem; }
+        .subject-btn.active { background: var(--system-accent-color); color: #000; border-color: var(--system-accent-color); }
+
+    </style>
 </head>
 <body>
-    <div class="background-animation"></div>
-    
+
+    <div id="custom-cursor"></div>
+
     <div class="container">
         <header>
-            <h1>Attendance Table Generator</h1>
-            <p class="subtitle">Arka Jain University | B.Tech (AI & DS)</p>
-            <p class="subtitle">A Webpage For Generating Attendance Sheet/Table by ArKT</p>
+            <div class="brand">AttendEX.</div>
+            <div class="meta-info">
+                SYS.NULLYEX: ONLINE<br>
+                <span id="date-display">...</span>
+            </div>
         </header>
 
-        <!-- <div class="upload-section card"> -->
-        <div class="upload-section card hidden">
-            <h2>Select Students</h2>
-            <label for="jsonFile" class="upload-label">
-                <span class="upload-icon">📁</span>
-                <span>Load human Data (JSON)</span>
-            </label>
-            <input type="file" id="jsonFile" accept=".json" />
-            <div id="fileInfo" class="file-info"></div>
-        </div>
-
-        <div class="upload-section card hidden" id="subjectSection">
-            <h2>Select Subject</h2>
-            <label for="subjectFile" class="upload-label">
-                <span class="upload-icon">📁</span>
-                <span>Load Subject Data (JSON)</span>
-            </label>
-            <input type="file" id="subjectFile" accept=".json" style="display:none;" />
-            <div id="subjectFileInfo" class="file-info"></div>
-            <div id="subjectButtons" class="subject-buttons"></div>
-        </div>
-
-        <div id="bulkActions" class="bulk-actions hidden">
-            <h3>Quick Actions</h3>
-            <div class="bulk-buttons">
-                <button id="markAllPresent" class="btn btn-bulk-present">
-                    Mark All Present
-                </button>
-                <button id="markAllAbsent" class="btn btn-bulk-absent">
-                    Mark All Absent
-                </button>
-                <button id="clearAll" class="btn btn-bulk-clear">
-                    Clear All
-                </button>
-            </div>
-        </div>
-
-        <div id="statsSection" class="stats-section hidden">
-            <div class="stat-card">
-                <div class="stat-value" id="totalhumans">0</div>
-                <div class="stat-label">Total humans</div>
-            </div>
-            <div class="stat-card merged-pa">
-                <div class="stat-merged">
-                    <span class="present-num" id="presentCount">0</span>
-                    <span class="divider">/</span>
-                    <span class="absent-num" id="absentCount">0</span>
-                </div>
-                <div class="stat-label">Present / Absent</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="unmarkedCount">0</div>
-                <div class="stat-label">Unmarked</div>
-            </div>
-        </div>
-
-        <div id="humanList" class="human-list"></div>
-
-        <div id="downloadSection" class="download-section card hidden">
-            <h2>Export Attendance</h2>
+        <div class="system-status">
+            <div class="label">01. SYSTEM STATUS</div>
             
-            <div class="options-grid">
-                <div class="option-group">
-                    <h3>Filter Options</h3>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="showPresentOnly" />
-                        <span>Show Present fellows Only</span>
-                    </label>
-                </div>
-
-                <div class="option-group">
-                    <h3>Include Columns</h3>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="includeName" />
-                        <span>Name</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="includeRollNo" checked />
-                        <span>Roll Number</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="includeEnrollment" />
-                        <span>Enrollment Number</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="includeStatus" checked />
-                        <span>Attendance Status</span>
-                    </label>
-                </div>
+            <div id="status-placeholder"></div>
+            
+            <div class="status-bar" id="statusBar">
+                <span id="system-msg">> Waiting for database...</span>
+                <span class="blink">█</span>
             </div>
-
-            <div class="button-group">
-                <button id="downloadExcel" class="btn btn-excel">
-                    Download in Excel
-                </button>
-                <button id="downloadTxt" class="btn btn-txt">
-                    Download in Text
-                </button>
-                <button id="viewText" class="btn btn-view">
-                    View in Browser
-                </button>
-            </div>
-
-            <div id="textView" class="text-view hidden"></div>
         </div>
+
+        <div class="card hidden" id="uploadCard">
+            <div class="card-header-row">
+                <div class="card-title" style="border:none; padding:0; margin:0;">DATA INPUT</div>
+            </div>
+            <div class="upload-area" onclick="document.getElementById('jsonFile').click()">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📂</div>
+                <div>CLICK TO LOAD STUDENT JSON</div>
+                <div id="fileInfo" style="font-size: 0.8rem; margin-top: 5px; color: var(--system-accent-color);"></div>
+            </div>
+            <input type="file" id="jsonFile" accept=".json">
+        </div>
+
+        <div class="card hidden" id="subjectCard">
+            <div class="card-header-row">
+                <div class="card-title" style="border:none; padding:0; margin:0;">SUBJECT SELECTION</div>
+            </div>
+            <div class="upload-area hidden" onclick="document.getElementById('subjectFile').click()">
+                <div>📂 LOAD SUBJECTS JSON</div>
+                <div id="subjectFileInfo" style="font-size: 0.8rem; margin-top: 5px; color: var(--system-accent-color);"></div>
+            </div>
+            <input type="file" id="subjectFile" accept=".json">
+            <div id="subjectButtons" class="subject-grid"></div>
+        </div>
+
+        <div id="mainDashboard" class="hidden">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-val" id="totalCount">0</div>
+                    <div class="stat-lbl">TOTAL</div>
+                </div>
+                <div class="stat-box" style="border-color: var(--accent-green);">
+                    <div class="stat-val" style="color: var(--accent-green);" id="presentCount">0</div>
+                    <div class="stat-lbl">PRESENT</div>
+                </div>
+                <div class="stat-box" style="border-color: var(--accent-red);">
+                    <div class="stat-val" style="color: var(--accent-red);" id="absentCount">0</div>
+                    <div class="stat-lbl">ABSENT</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">BULK OPERATIONS</div>
+                <div class="btn-grid">
+                    <button id="markAllPresent" class="sys-btn">ALL PRESENT</button>
+                    <button id="markAllAbsent" class="sys-btn">ALL ABSENT</button>
+                    <button id="clearAll" class="sys-btn">RESET ALL</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header-row">
+                    <div class="card-title" style="border:none; padding:0; margin:0;">ATTENDANCE REGISTER</div>
+                    <input type="text" id="searchHuman" placeholder="SEARCH DATABASE..." class="search-input">
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 10px;">> CLICK ROW TO TOGGLE STATUS</div>
+                <div id="humanList" class="human-list"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header-row">
+                    <div class="card-title" style="border:none; padding:0; margin:0;">DATA EXPORT</div>
+                    <div id="copyFlash">COPIED TO CLIPBOARD</div>
+                </div>
+                
+                <div class="toggle-grid" id="filterSection">
+                    <div class="toggle-chip active" id="t-present" onclick="toggleOption('t-present')">
+                        <span>FILTER: PRESENT ONLY</span>
+                        <span class="icon">○</span>
+                    </div>
+                    <div class="toggle-chip active" id="t-roll" onclick="toggleOption('t-roll')">
+                        <span>INCLUDE: ROLL NO</span>
+                        <span class="icon">●</span>
+                    </div>
+                    <div class="toggle-chip" id="t-name" onclick="toggleOption('t-name')">
+                        <span>INCLUDE: NAME</span>
+                        <span class="icon">○</span>
+                    </div>
+                    <div class="toggle-chip active" id="t-status" onclick="toggleOption('t-status')">
+                        <span>INCLUDE: STATUS</span>
+                        <span class="icon">●</span>
+                    </div>
+                </div>
+
+                <div class="btn-grid">
+                    <button id="downloadExcel" class="sys-btn primary">EXPORT .XLSX</button>
+                    <button id="downloadTxt" class="sys-btn">EXPORT .TXT</button>
+                    <button id="viewText" class="sys-btn">VIEW RAW</button>
+                </div>
+
+                <textarea id="textView" class="text-output" readonly></textarea>
+            </div>
+        </div>
+
+        <footer>
+            <div class="team-section">
+                <span class="team-label">SYS.TEAM ::</span>
+                <span id="team-display" class="team-container"></span>
+            </div>
+            <div>
+                <a href="https://github.com/NullYex" class="social-link">GITHUB</a>
+            </div>
+        </footer>
     </div>
-    <button id="scrollToggleBtn" class="scroll-toggle-btn" style="display: none;" aria-label="Scroll">
-    <span id="scrollBtnIcon">⬇</span>
-    </button>
-    </button>
-    <script src="scrp-yex.js"></script>
+
+    <script>
+        let humans = [];
+        let attendance = {};
+        let subjects = [];
+        let selectedSubject = null;
+        let isRawViewOpen = false;
+        let isErrorState = false;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            autoLoadJSON();
+            autoLoadSubjectJSON();
+            
+            const dateEl = document.getElementById('date-display');
+            const now = new Date();
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+            dateEl.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+        });
+
+        function setSystemMsg(msg, isError = false) {
+            const bar = document.getElementById('statusBar');
+            document.getElementById('system-msg').textContent = "> " + msg;
+            
+            isErrorState = isError;
+
+            if (isError) {
+                bar.classList.add('error');
+                updateStatusVisibility();
+                
+                setTimeout(() => {
+                    bar.classList.remove('error');
+                    isErrorState = false;
+                    updateStatusVisibility();
+                    if(msg.includes("ERROR") || msg.includes("NULL")) {
+                        if(humans.length > 0) setSystemMsg("Ready for input.");
+                        else setSystemMsg("Waiting for database...");
+                    }
+                }, 3000);
+            } else {
+                bar.classList.remove('error');
+                updateStatusVisibility();
+            }
+        }
+
+        window.addEventListener('scroll', updateStatusVisibility);
+
+        function updateStatusVisibility() {
+            const bar = document.getElementById('statusBar');
+            const placeholder = document.getElementById('status-placeholder');
+            
+            if (isErrorState && window.scrollY > 150) {
+                bar.classList.add('floating');
+                placeholder.style.display = 'block';
+            } else {
+                bar.classList.remove('floating');
+                placeholder.style.display = 'none';
+            }
+        }
+
+        function validateExport(isFilterCheck = false) {
+            if (!selectedSubject) {
+                setSystemMsg("ERROR: NO SUBJECT SELECTED", true);
+                const subCard = document.getElementById('subjectCard');
+                subCard.scrollIntoView({ behavior: 'smooth' });
+                subCard.classList.add('error-shake');
+                setTimeout(() => subCard.classList.remove('error-shake'), 500);
+                return false;
+            }
+
+            if (document.getElementById('t-present').classList.contains('active')) {
+                let pCount = 0;
+                Object.values(attendance).forEach(s => { if(s===true) pCount++ });
+                if (pCount === 0) {
+                    setSystemMsg("DATA NULL: NO RECORDS MATCH FILTER", true);
+                    if(isFilterCheck) {
+                        const filterDiv = document.getElementById('filterSection');
+                        filterDiv.classList.add('error-shake');
+                        setTimeout(() => filterDiv.classList.remove('error-shake'), 500);
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function autoLoadJSON() {
+            try {
+                const response = await fetch('humans-xD.json');
+                if (!response.ok) throw new Error('404');
+                const data = await response.json();
+                loadHumansData(data, "humans-xD.json (Auto)");
+            } catch (error) {
+                setSystemMsg("Database missing. Waiting for manual upload...");
+            }
+        }
+
+        async function autoLoadSubjectJSON() {
+            try {
+                const response = await fetch('subjects-why-not.json');
+                if (!response.ok) throw new Error('404');
+                subjects = await response.json();
+                loadSubjectsUI("subjects-why-not.json (Auto)");
+            } catch (error) { console.log("Subject auto-load failed"); }
+        }
+
+        function loadHumansData(data, sourceName) {
+            humans = data;
+            attendance = {};
+            humans.forEach((h, i) => attendance[i] = null);
+            document.getElementById('fileInfo').textContent = `Loaded ${humans.length} records from ${sourceName}`;
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            setSystemMsg("Database Loaded. Ready for input.");
+            displayHumans(); updateStats();
+        }
+
+        document.getElementById('jsonFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    loadHumansData(data, file.name);
+                } catch (e) { alert("Invalid JSON"); }
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('subjectFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    subjects = JSON.parse(event.target.result);
+                    loadSubjectsUI(file.name);
+                } catch (e) { alert("Invalid Subject JSON"); }
+            };
+            reader.readAsText(file);
+        });
+
+        function loadSubjectsUI(sourceName) {
+            const container = document.getElementById('subjectButtons');
+            container.innerHTML = '';
+            document.getElementById('subjectCard').classList.remove('hidden');
+            document.getElementById('subjectFileInfo').textContent = `Loaded from ${sourceName}`;
+
+            subjects.forEach((sub, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn subject-btn';
+                btn.textContent = sub.name || sub;
+                btn.id = `sub-btn-${idx}`;
+                btn.onclick = () => selectSubject(idx, sub);
+                container.appendChild(btn);
+            });
+
+            if (subjects.length === 1) selectSubject(0, subjects[0]);
+        }
+
+        function selectSubject(idx, sub) {
+            selectedSubject = sub;
+            document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sub-btn-${idx}`).classList.add('active');
+            setSystemMsg(`Subject Selected: ${sub.name || sub}`);
+            if (isRawViewOpen) updateAndCopyRaw(); 
+        }
+
+        document.getElementById('searchHuman').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            displayHumans(term);
+        });
+
+        function displayHumans(filterTerm = '') {
+            const container = document.getElementById('humanList');
+            container.innerHTML = '';
+
+            humans.forEach((human, index) => {
+                if (filterTerm) {
+                    const name = human.name.toLowerCase();
+                    const roll = String(human.rollNo).toLowerCase();
+                    const enroll = String(human.enrollmentNo).toLowerCase();
+                    if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm)) return;
+                }
+
+                const item = document.createElement('div');
+                item.className = 'human-item';
+                let statusText = "---";
+                if (attendance[index] === true) { item.classList.add('present'); statusText = "PRESENT"; } 
+                else if (attendance[index] === false) { item.classList.add('absent'); statusText = "ABSENT"; }
+
+                item.onclick = () => cycleStatus(index);
+                item.innerHTML = `
+                    <div class="human-info">
+                        <strong>${human.name}</strong>
+                        <span class="human-sub">Roll: ${human.rollNo} | ID: ${human.enrollmentNo}</span>
+                    </div>
+                    <div class="status-badge">${statusText}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        window.cycleStatus = function(index) {
+            if (attendance[index] === null) attendance[index] = true;
+            else if (attendance[index] === true) attendance[index] = false;
+            else attendance[index] = null;
+            
+            const currentSearch = document.getElementById('searchHuman').value.toLowerCase();
+            displayHumans(currentSearch); 
+            updateStats();
+            if (isRawViewOpen) updateAndCopyRaw();
+        };
+
+        function updateStats() {
+            let p = 0, a = 0;
+            Object.values(attendance).forEach(s => { if (s === true) p++; if (s === false) a++; });
+            document.getElementById('totalCount').textContent = humans.length;
+            document.getElementById('presentCount').textContent = p;
+            document.getElementById('absentCount').textContent = a;
+        }
+
+        document.getElementById('markAllPresent').onclick = () => { humans.forEach((_, i) => attendance[i] = true); refreshUI(); };
+        document.getElementById('markAllAbsent').onclick = () => { humans.forEach((_, i) => attendance[i] = false); refreshUI(); };
+        document.getElementById('clearAll').onclick = () => { humans.forEach((_, i) => attendance[i] = null); refreshUI(); };
+
+        function refreshUI() {
+            const currentSearch = document.getElementById('searchHuman').value.toLowerCase();
+            displayHumans(currentSearch); updateStats();
+            if (isRawViewOpen) updateAndCopyRaw();
+        }
+
+        function toggleOption(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('active');
+            const icon = el.querySelector('.icon');
+            icon.textContent = el.classList.contains('active') ? '●' : '○';
+            if (isRawViewOpen) updateAndCopyRaw();
+        }
+
+        function getExportData() {
+            const onlyPresent = document.getElementById('t-present').classList.contains('active');
+            const useName = document.getElementById('t-name').classList.contains('active');
+            const useRoll = document.getElementById('t-roll').classList.contains('active');
+            const useStatus = document.getElementById('t-status').classList.contains('active');
+
+            let data = [];
+            humans.forEach((h, i) => {
+                if (onlyPresent && attendance[i] !== true) return;
+                let row = {};
+                if (useName) row['Name'] = h.name;
+                if (useRoll) row['Roll No'] = h.rollNo;
+                if (true) row['Enrollment'] = h.enrollmentNo; 
+                if (useStatus) row['Status'] = attendance[i] === true ? 'Present' : (attendance[i] === false ? 'Absent' : 'Unmarked');
+                data.push(row);
+            });
+            return data;
+        }
+
+        function generateRawText() {
+            const data = getExportData();
+            const subject = selectedSubject ? (selectedSubject.name || selectedSubject) : "Unknown Subject";
+            let txt = `ATTENDANCE REPORT - SUBJECT: ${subject}\nDATE: ${new Date().toLocaleString()}\n----------------------------\n`;
+            data.forEach(row => { txt += Object.values(row).join(" | ") + "\n"; });
+            return txt;
+        }
+
+        async function updateAndCopyRaw() {
+            const txt = generateRawText();
+            const area = document.getElementById('textView');
+            area.value = txt;
+            try { await navigator.clipboard.writeText(txt); showFlash(); } catch(e) {}
+        }
+
+        function showFlash() {
+            const f = document.getElementById('copyFlash');
+            f.classList.add('visible');
+            setTimeout(() => f.classList.remove('visible'), 1500);
+        }
+
+        document.getElementById('viewText').onclick = () => {
+            if(!validateExport(true)) return;
+            const area = document.getElementById('textView');
+            if (area.style.display === 'block') {
+                area.style.display = 'none';
+                isRawViewOpen = false;
+            } else {
+                area.style.display = 'block';
+                isRawViewOpen = true;
+                updateAndCopyRaw();
+            }
+        };
+
+        document.getElementById('downloadTxt').onclick = () => {
+            if(!validateExport()) return;
+            const txt = generateRawText();
+            const blob = new Blob([txt], {type: 'text/plain'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Attendance_${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+        };
+
+        document.getElementById('downloadExcel').onclick = () => {
+            if(!validateExport()) return;
+            const data = getExportData();
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+            XLSX.writeFile(wb, `Attendance_${new Date().toISOString().slice(0,10)}.xlsx`);
+        };
+
+        const cursor = document.getElementById('custom-cursor');
+        let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+        const speed = 0.15;
+
+        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        document.body.addEventListener('mouseover', (e) => {
+            if (e.target.closest('button, .card, input, .upload-area, .human-item, .toggle-chip')) {
+                document.body.classList.add('hovering');
+            } else {
+                document.body.classList.remove('hovering');
+            }
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * speed;
+            cursorY += (mouseY - cursorY) * speed;
+            const dist = Math.sqrt(Math.pow(mouseX - cursorX, 2) + Math.pow(mouseY - cursorY, 2));
+            const scale = Math.min(dist / 100, 0.4);
+            const angle = Math.atan2(mouseY - cursorY, mouseX - cursorX) * 180 / Math.PI;
+            cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scale(${1 + scale}, ${1 - scale * 0.5})`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        const teamMembers = ['Amrit Ranjan', 'Farhan Khalid', 'Kamran Alvi'];
+        const teamContainer = document.getElementById('team-display');
+        let separators = ['|', '●']; 
+        let themes = [ { color: 'var(--accent-green)', dim: 'rgba(46, 204, 113, 0.05)' }, { color: 'var(--accent-blue)', dim: 'rgba(0, 225, 255, 0.05)' } ];
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+        async function typeWriterLoop() {
+            while (true) {
+                const currentSymbol = separators[Math.floor(Math.random() * separators.length)];
+                const themeIndex = Math.floor(Math.random() * themes.length);
+                const currentTheme = themes[themeIndex];
+                const oppositeTheme = themes[1 - themeIndex];
+
+                document.documentElement.style.setProperty('--system-accent-color', currentTheme.color);
+                document.documentElement.style.setProperty('--dim-color', currentTheme.dim);
+                document.documentElement.style.setProperty('--cursor-ball-color', oppositeTheme.color);
+
+                for (let i = 0; i < teamMembers.length; i++) {
+                    const name = teamMembers[i];
+                    const span = document.createElement('span');
+                    teamContainer.appendChild(span);
+                    for (let char of name) { span.textContent += char; await sleep(50); }
+                    if (i < teamMembers.length - 1) {
+                        const sep = document.createElement('span');
+                        sep.className = 'team-separator';
+                        sep.style.color = currentTheme.color;
+                        sep.textContent = currentSymbol;
+                        teamContainer.appendChild(sep);
+                        await sleep(50); 
+                    }
+                }
+                await sleep(4000); 
+                while (teamContainer.lastChild) { teamContainer.removeChild(teamContainer.lastChild); await sleep(20); }
+                const f = teamMembers.shift(); teamMembers.push(f); await sleep(500); 
+            }
+        }
+        typeWriterLoop();
+
+    </script>
 </body>
 </html>
