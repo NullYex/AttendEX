@@ -106,7 +106,8 @@
 
         header {
             display: flex; justify-content: space-between; align-items: flex-end;
-            margin-bottom: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;
+            margin-bottom: 2px; /* Reduced margin since button moved */
+            border-bottom: 1px solid var(--border-color); padding-bottom: 20px;
             transition: border-color 0.3s ease;
         }
         .brand { font-size: 2rem; font-weight: bold; letter-spacing: -2px; }
@@ -120,6 +121,13 @@
         }
 
         .meta-info { font-size: 0.75rem; color: var(--text-dim); text-align: right; line-height: 1.4; }
+
+        .toolbar-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
 
         .theme-btn {
             background: transparent;
@@ -206,9 +214,9 @@
         }
 
         #attendanceCard:hover {
-            background-color: transparent !important;
+            background-color: transparent !important; 
             box-shadow: none !important;
-            border-color: var(--border-color);
+            border-color: var(--border-color); 
         }
         
         @keyframes shake {
@@ -414,13 +422,16 @@
         <header>
             <div class="brand">AttendEX.</div>
             <div class="header-right">
-                <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
                 <div class="meta-info">
                     SYS.NULLYEX: ONLINE<br>
                     <span id="date-display">...</span>
                 </div>
             </div>
         </header>
+
+        <div class="toolbar-container">
+            <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
+        </div>
 
         <div class="system-status">
             <div class="label">01. SYSTEM STATUS</div>
