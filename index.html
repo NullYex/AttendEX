@@ -21,18 +21,19 @@
             --border-color: #333333;
             --font-stack: 'JetBrains Mono', monospace; 
             --radius: 16px;
-            --system-accent-color: var(--accent-green);
-            --cursor-ball-color: var(--accent-blue);
+            --system-accent-color: #2ecc71;
+            --cursor-ball-color: #f39c12; 
             --dim-color: rgba(46, 204, 113, 0.05);
         }
 
-        [data-theme="light"] {
-            --bg-color: #f4f4f5;       
-            --card-bg: #ffffff;        
-            --text-color: #18181b;     
-            --text-dim: #71717a;       
-            --border-color: #e4e4e7;   
-        }
+        [data-theme="light"] { --bg-color: #f4f4f5; --card-bg: #ffffff; --text-color: #18181b; --text-dim: #71717a; --border-color: #e4e4e7; --system-accent-color: #10b981; --dim-color: rgba(16, 185, 129, 0.1); --cursor-ball-color: #8b5cf6; }
+        [data-theme="sunset"] { --bg-color: #1a0b14; --card-bg: #2d1b24; --text-color: #fce7f3; --text-dim: #be185d; --border-color: #500724; --system-accent-color: #f59e0b; --dim-color: rgba(245, 158, 11, 0.1); --cursor-ball-color: #06b6d4; }
+        [data-theme="ocean"] { --bg-color: #0f172a; --card-bg: #1e293b; --text-color: #e2e8f0; --text-dim: #94a3b8; --border-color: #334155; --system-accent-color: #38bdf8; --dim-color: rgba(56, 189, 248, 0.1); --cursor-ball-color: #facc15; }
+        [data-theme="forest"] { --bg-color: #051a0d; --card-bg: #0c2b16; --text-color: #ecfdf5; --text-dim: #34d399; --border-color: #14532d; --system-accent-color: #4ade80; --dim-color: rgba(74, 222, 128, 0.1); --cursor-ball-color: #ff00ff; }
+        [data-theme="berry"] { --bg-color: #2e0216; --card-bg: #4a0424; --text-color: #ffe4e6; --text-dim: #fb7185; --border-color: #831843; --system-accent-color: #fb7185; --dim-color: rgba(251, 113, 133, 0.1); --cursor-ball-color: #a3e635; }
+        [data-theme="royal"] { --bg-color: #1e0b2e; --card-bg: #2e1045; --text-color: #f3e8ff; --text-dim: #c084fc; --border-color: #581c87; --system-accent-color: #fbbf24; --dim-color: rgba(251, 191, 36, 0.1); --cursor-ball-color: #d8b4fe; }
+        [data-theme="coffee"] { --bg-color: #271c19; --card-bg: #382823; --text-color: #e6dace; --text-dim: #a68b7c; --border-color: #5d4037; --system-accent-color: #d4a373; --dim-color: rgba(212, 163, 115, 0.1); --cursor-ball-color: #2dd4bf; }
+        [data-theme="midnight"] { --bg-color: #020617; --card-bg: #0f172a; --text-color: #e2e8f0; --text-dim: #64748b; --border-color: #1e293b; --system-accent-color: #6366f1; --dim-color: rgba(99, 102, 241, 0.1); --cursor-ball-color: #39ff14; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -45,22 +46,50 @@
             min-height: 100vh;
             padding: 20px;
             overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 40px; border-radius: 24px; width: 90%; max-width: 500px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .palette-option {
+            height: 60px; border-radius: 12px; border: 2px solid transparent;
+            display: flex; overflow: hidden; position: relative; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .palette-option:hover { transform: scale(1.05); }
+        .palette-option.active { border-color: var(--text-color); transform: scale(1.05); }
+        .p-col { flex: 1; height: 100%; }
+        
         #custom-cursor {
             display: none; 
             position: fixed; top: 0; left: 0;
             width: 21px; height: 21px;
             border: 2.39px solid var(--cursor-ball-color); 
-            box-shadow: 0 0 3px var(--cursor-ball-color);
+            box-shadow: 0 0 5px var(--cursor-ball-color);
             background-color: rgba(0, 0, 0, 0); 
             backdrop-filter: blur(1px);
             border-radius: 50%;
-            pointer-events: none; z-index: 9999;
+            pointer-events: none; 
+            z-index: 20001;
             transform-origin: center center;
             transition: border-color 0.2s, box-shadow 0.2s;
-            mix-blend-mode: exclusion;
+            mix-blend-mode: normal; 
             will-change: transform; 
         }
 
@@ -68,8 +97,8 @@
             * { cursor: none !important; }
             #custom-cursor { display: block; }
             body.hovering #custom-cursor {
-                box-shadow: 0 0 6px var(--cursor-ball-color);
-                background-color: rgba(255, 255, 255, 0.05);
+                box-shadow: 0 0 10px var(--cursor-ball-color);
+                background-color: var(--dim-color);
             }
         }
 
@@ -174,6 +203,12 @@
             border-color: var(--system-accent-color); 
             background-color: var(--dim-color);
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        #attendanceCard:hover {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border-color: var(--border-color);
         }
         
         @keyframes shake {
@@ -342,7 +377,14 @@
             line-height: 1;
             transition: color 0.5s ease;
         }
-        .team-separator { margin: 0 8px; font-weight: bold; }
+        
+        .team-separator { 
+            margin: 0 8px; 
+            font-weight: bold; 
+            color: var(--system-accent-color);
+            transition: color 0.3s;
+        }
+        
         a.social-link { color: inherit; text-decoration: none; margin-left: 15px; transition: color 0.3s; }
         a.social-link:hover { color: var(--system-accent-color); }
 
@@ -356,11 +398,23 @@
 
     <div id="custom-cursor"></div>
 
+    <div id="theme-overlay" class="overlay">
+        <div class="modal-card">
+            <h2 class="brand">VISUAL STYLE</h2>
+            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px;">SELECT INTERFACE THEME</div>
+            
+            <div class="palette-grid" id="themeGrid">
+                </div>
+            
+            <button class="sys-btn" onclick="toggleOverlay('theme-overlay', false)" style="width: 100%; margin-top: 25px;">CLOSE</button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <div class="brand">AttendEX.</div>
             <div class="header-right">
-                <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">[MODE: DRK]</button>
+                <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
                 <div class="meta-info">
                     SYS.NULLYEX: ONLINE<br>
                     <span id="date-display">...</span>
@@ -405,8 +459,8 @@
 
         <div id="mainDashboard" class="hidden">
             <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-val" id="totalCount">0</div>
+                <div class="stat-box" style="border-color: var(--system-accent-color);">
+                    <div class="stat-val" style="color: var(--system-accent-color);" id="totalCount">0</div>
                     <div class="stat-lbl">TOTAL</div>
                 </div>
                 <div class="stat-box" style="border-color: var(--accent-green);">
@@ -428,7 +482,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" id="attendanceCard">
                 <div class="card-header-row">
                     <div class="card-title" style="border:none; padding:0; margin:0;">ATTENDANCE REGISTER</div>
                     <input type="text" id="searchHuman" placeholder="SEARCH DATABASE..." class="search-input">
@@ -491,27 +545,74 @@
         let isRawViewOpen = false;
         let isErrorState = false;
 
+        const THEMES = [
+            { id: 'dark', name: 'Cyber Dark', colors: ['#050505', '#2ecc71'] },
+            { id: 'light', name: 'Clean Light', colors: ['#ffffff', '#10b981'] },
+            { id: 'sunset', name: 'Sunset Vibe', colors: ['#2d1b24', '#f59e0b'] },
+            { id: 'ocean', name: 'Deep Ocean', colors: ['#0f172a', '#38bdf8'] },
+            { id: 'forest', name: 'Neon Forest', colors: ['#051a0d', '#4ade80'] },
+            { id: 'berry', name: 'Wild Berry', colors: ['#4a0424', '#fb7185'] },
+            { id: 'royal', name: 'Royal Gold', colors: ['#1e0b2e', '#fbbf24'] },
+            { id: 'coffee', name: 'Dark Roast', colors: ['#271c19', '#d4a373'] },
+            { id: 'midnight', name: 'Midnight', colors: ['#020617', '#6366f1'] },
+        ];
+
+        function applyTheme(themeId) {
+            document.documentElement.setAttribute('data-theme', themeId);
+            localStorage.setItem('attendex_theme', themeId);
+
+            const options = document.querySelectorAll('.palette-option');
+            if (options.length > 0) {
+                 options.forEach(el => {
+                    el.classList.toggle('active', el.dataset.theme === themeId);
+                });
+            }
+
+            const btn = document.getElementById('theme-toggle');
+            if (btn) {
+                const currentTheme = THEMES.find(t => t.id === themeId);
+                if(currentTheme) {
+                    btn.textContent = `[THEME: ${currentTheme.name.toUpperCase()}]`;
+                }
+            }
+        }
+
+        function generateThemeGrid() {
+            const grid = document.getElementById('themeGrid');
+            grid.innerHTML = '';
+            THEMES.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'palette-option';
+                div.dataset.theme = t.id;
+                div.onclick = () => applyTheme(t.id);
+                div.innerHTML = `
+                    <div class="p-col" style="background:${t.colors[0]}"></div>
+                    <div class="p-col" style="background:${t.colors[1]}"></div>
+                    <div style="position:absolute; bottom:5px; left:0; width:100%; text-align:center; font-size:0.6rem; color:#fff; text-shadow:0 1px 2px #000; font-weight:bold;">${t.name.toUpperCase()}</div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function toggleOverlay(id, show) {
+            const el = document.getElementById(id);
+            if(show) el.classList.add('active');
+            else el.classList.remove('active');
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             autoLoadJSON();
             autoLoadSubjectJSON();
+            
+            generateThemeGrid();
+            const savedTheme = localStorage.getItem('attendex_theme') || 'dark';
+            applyTheme(savedTheme);
             
             const dateEl = document.getElementById('date-display');
             const now = new Date();
             const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
             dateEl.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
         });
-
-        const toggleBtn = document.getElementById('theme-toggle');
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.getAttribute('data-theme') === 'light') {
-                html.removeAttribute('data-theme');
-                toggleBtn.textContent = '[MODE: DRK]';
-            } else {
-                html.setAttribute('data-theme', 'light');
-                toggleBtn.textContent = '[MODE: LGT]';
-            }
-        }
 
         function setSystemMsg(msg, isError = false) {
             const bar = document.getElementById('statusBar');
@@ -587,6 +688,7 @@
                 loadHumansData(data, "humans-xD.json (Auto)");
             } catch (error) {
                 setSystemMsg("Database missing. Waiting for manual upload...");
+                document.getElementById('uploadCard').classList.remove('hidden');
             }
         }
 
@@ -605,6 +707,7 @@
             humans.forEach((h, i) => attendance[i] = null);
             document.getElementById('fileInfo').textContent = `Loaded ${humans.length} records from ${sourceName}`;
             document.getElementById('mainDashboard').classList.remove('hidden');
+            document.getElementById('uploadCard').classList.add('hidden');
             setSystemMsg("Database Loaded. Ready for input.");
             displayHumans(); updateStats();
         }
@@ -832,20 +935,12 @@
         const teamMembers = ['Amrit Ranjan', 'Farhan Khalid', 'Kamran Alvi'];
         const teamContainer = document.getElementById('team-display');
         let separators = ['|', '●']; 
-        let themes = [ { color: 'var(--accent-green)', dim: 'rgba(46, 204, 113, 0.05)' }, { color: 'var(--accent-blue)', dim: 'rgba(0, 225, 255, 0.05)' } ];
         const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
         async function typeWriterLoop() {
             while (true) {
                 const currentSymbol = separators[Math.floor(Math.random() * separators.length)];
-                const themeIndex = Math.floor(Math.random() * themes.length);
-                const currentTheme = themes[themeIndex];
-                const oppositeTheme = themes[1 - themeIndex];
-
-                document.documentElement.style.setProperty('--system-accent-color', currentTheme.color);
-                document.documentElement.style.setProperty('--dim-color', currentTheme.dim);
-                document.documentElement.style.setProperty('--cursor-ball-color', oppositeTheme.color);
-
+                
                 for (let i = 0; i < teamMembers.length; i++) {
                     const name = teamMembers[i];
                     const span = document.createElement('span');
@@ -854,7 +949,6 @@
                     if (i < teamMembers.length - 1) {
                         const sep = document.createElement('span');
                         sep.className = 'team-separator';
-                        sep.style.color = currentTheme.color;
                         sep.textContent = currentSymbol;
                         teamContainer.appendChild(sep);
                         await sleep(50); 
