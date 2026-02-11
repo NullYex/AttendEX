@@ -1475,16 +1475,21 @@
             }
             );
 
-            function displayHumans(filterTerm='') {
+            function displayHumans(filterTerm = '') {
                 const container = document.getElementById('humanList');
                 container.innerHTML = '';
-                humans.forEach( (human, index) => {
+                const isTwoDigitSearch = /^\d{2}$/.test(filterTerm.trim());
+                humans.forEach((human, index) => {
                     if (filterTerm) {
                         const name = human.name.toLowerCase();
                         const roll = String(human.rollNo).toLowerCase();
                         const enroll = String(human.enrollmentNo).toLowerCase();
-                        if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm))
-                            return;
+
+                        if (isTwoDigitSearch) {
+                            if (!roll.includes(filterTerm)) return;
+                        } else {
+                            if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm)) return;
+                        }
                     }
                     const item = document.createElement('div');
                     item.className = 'human-item';
