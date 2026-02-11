@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AttendEX | By NullYex</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+        <style>
+            :root {
+                --bg-color: #050505;
+                --card-bg: #0a0a0a;
+                --text-color: #e0e0e0;
+                --text-dim: #888;
+                --accent-green: #2ecc71;
+                --accent-red: #e74c3c;
+                --border-color: #333333;
+                --font-stack: 'JetBrains Mono', monospace;
+                --radius: 16px;
+                --system-accent-color: #2ecc71;
+                --cursor-ball-color: #f39c12;
+                --dim-color: rgba(46, 204, 113, 0.05);
+            }
+
+            [data-theme="light"] {
+                --bg-color: #f4f4f5;
+                --card-bg: #ffffff;
+                --text-color: #18181b;
+                --text-dim: #71717a;
+                --border-color: #e4e4e7;
+                --system-accent-color: #10b981;
+                --dim-color: rgba(16, 185, 129, 0.1);
+                --cursor-ball-color: #8b5cf6;
+            }
+
+            [data-theme="sunset"] {
+                --bg-color: #1a0b14;
+                --card-bg: #2d1b24;
+                --text-color: #fce7f3;
+                --text-dim: #be185d;
+                --border-color: #500724;
+                --system-accent-color: #f59e0b;
+                --dim-color: rgba(245, 158, 11, 0.1);
+                --cursor-ball-color: #06b6d4;
+            }
+
+            [data-theme="ocean"] {
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-color: #e2e8f0;
+                --text-dim: #94a3b8;
+                --border-color: #334155;
+                --system-accent-color: #38bdf8;
+                --dim-color: rgba(56, 189, 248, 0.1);
+                --cursor-ball-color: #facc15;
+            }
+
+            [data-theme="forest"] {
+                --bg-color: #051a0d;
+                --card-bg: #0c2b16;
+                --text-color: #ecfdf5;
+                --text-dim: #34d399;
+                --border-color: #14532d;
+                --system-accent-color: #4ade80;
+                --dim-color: rgba(74, 222, 128, 0.1);
+                --cursor-ball-color: #ff00ff;
+            }
+
+            [data-theme="berry"] {
+                --bg-color: #2e0216;
+                --card-bg: #4a0424;
+                --text-color: #ffe4e6;
+                --text-dim: #fb7185;
+                --border-color: #831843;
+                --system-accent-color: #fb7185;
+                --dim-color: rgba(251, 113, 133, 0.1);
+                --cursor-ball-color: #a3e635;
+            }
+
+            [data-theme="royal"] {
+                --bg-color: #1e0b2e;
+                --card-bg: #2e1045;
+                --text-color: #f3e8ff;
+                --text-dim: #c084fc;
+                --border-color: #581c87;
+                --system-accent-color: #fbbf24;
+                --dim-color: rgba(251, 191, 36, 0.1);
+                --cursor-ball-color: #d8b4fe;
+            }
+
+            [data-theme="coffee"] {
+                --bg-color: #271c19;
+                --card-bg: #382823;
+                --text-color: #e6dace;
+                --text-dim: #a68b7c;
+                --border-color: #5d4037;
+                --system-accent-color: #d4a373;
+                --dim-color: rgba(212, 163, 115, 0.1);
+                --cursor-ball-color: #2dd4bf;
+            }
+
+            [data-theme="midnight"] {
+                --bg-color: #020617;
+                --card-bg: #0f172a;
+                --text-color: #e2e8f0;
+                --text-dim: #64748b;
+                --border-color: #1e293b;
+                --system-accent-color: #6366f1;
+                --dim-color: rgba(99, 102, 241, 0.1);
+                --cursor-ball-color: #39ff14;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                user-select: none;
+            }
+
+            body {
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                font-family: var(--font-stack);
+                display: flex;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 20px;
+                overflow-x: hidden;
+                transition: background-color 0.4s ease, color 0.4s ease;
+            }
+
+            #access-denied-screen {
+                display: none;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 90vh;
+                text-align: center;
+                width: 100%;
+                animation: fadeIn 1s ease-in;
+            }
+
+            .lockdown-brand {
+                font-size: 3.5rem;
+                font-weight: bold;
+                letter-spacing: -3px;
+                margin-bottom: 5px;
+                color: var(--text-color);
+            }
+
+            .lockdown-subtitle {
+                font-size: 1rem;
+                color: var(--system-accent-color);
+                letter-spacing: 3px;
+                font-weight: bold;
+                margin-bottom: 50px;
+                text-transform: uppercase;
+            }
+
+            .denied-title {
+                font-size: 2.5rem;
+                color: var(--accent-red);
+                font-weight: 900;
+                letter-spacing: -1px;
+                margin-bottom: 10px;
+                text-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+            }
+
+            .creator-block {
+                margin: 30px 0;
+                border: 1px solid var(--border-color);
+                padding: 30px;
+                border-radius: var(--radius);
+                background: rgba(255,255,255,0.02);
+                width: 100%;
+                max-width: 500px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .creator-label {
+                font-size: 0.8rem;
+                color: var(--text-dim);
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin-bottom: 20px;
+            }
+
+            .creator-name {
+                font-size: 1.5rem;
+                font-weight: bold;
+                margin: 10px 0;
+                color: var(--text-color);
+                transition: all 0.5s ease;
+            }
+
+            .creator-name:first-child {
+                color: var(--system-accent-color);
+                transform: scale(1.05);
+            }
+
+            .denied-footer {
+                margin-top: 40px;
+                color: var(--accent-red);
+                font-size: 1.5rem;
+                font-weight: 900;
+                text-transform: uppercase;
+                border: 2px solid var(--accent-red);
+                padding: 20px;
+                border-radius: 8px;
+                background: rgba(231, 76, 60, 0.1);
+                animation: pulse-red 2s infinite;
+            }
+
+            @keyframes pulse-red {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+                }
+
+                70% {
+                    box-shadow: 0 0 0 20px rgba(231, 76, 60, 0);
+                }
+
+                100% {
+                    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+                }
+            }
+
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s;
+            }
+
+            .overlay.active {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .modal-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                padding: 40px;
+                border-radius: 24px;
+                width: 90%;
+                max-width: 500px;
+                text-align: center;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+                position: relative;
+            }
+
+            .palette-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .palette-option {
+                height: 60px;
+                border-radius: 12px;
+                border: 2px solid transparent;
+                display: flex;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .palette-option:hover {
+                transform: scale(1.05);
+            }
+
+            .palette-option.active {
+                border-color: var(--text-color);
+                transform: scale(1.05);
+            }
+
+            .p-col {
+                flex: 1;
+                height: 100%;
+            }
+
+            #custom-cursor {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 21px;
+                height: 21px;
+                border: 2.39px solid var(--cursor-ball-color);
+                box-shadow: 0 0 5px var(--cursor-ball-color);
+                background-color: rgba(0, 0, 0, 0);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 20001;
+                transform-origin: center center;
+                transition: border-color 0.2s, box-shadow 0.2s;
+                mix-blend-mode: normal;
+                will-change: transform;
+            }
+
+            @media (pointer: fine) {
+                body.custom-cursor-active, body.custom-cursor-active * {
+                    cursor: none !important;
+                }
+
+                body.custom-cursor-active #custom-cursor {
+                    display: block;
+                }
+
+                body.custom-cursor-active.hovering #custom-cursor {
+                    box-shadow: 0 0 10px var(--cursor-ball-color);
+                    background-color: var(--dim-color);
+                }
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1000px;
+                padding-bottom: 50px;
+                position: relative;
+            }
+
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                margin-bottom: 2px;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 20px;
+                transition: border-color 0.3s ease;
+            }
+
+            .brand {
+                font-size: 2rem;
+                font-weight: bold;
+                letter-spacing: -2px;
+            }
+
+            .header-right {
+                text-align: right;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+
+            .meta-info {
+                font-size: 0.75rem;
+                color: var(--text-dim);
+                text-align: right;
+                line-height: 1.4;
+            }
+
+            .toolbar-container {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 10px;
+                margin-top: 0;
+                gap: 10px;
+            }
+
+            .theme-btn {
+                background: transparent;
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+                font-family: var(--font-stack);
+                font-size: 0.7rem;
+                padding: 6px 12px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                font-weight: bold;
+            }
+
+            .theme-btn:hover {
+                border-color: var(--system-accent-color);
+                color: var(--system-accent-color);
+                box-shadow: 0 0 10px var(--dim-color);
+            }
+
+            .logout-btn {
+                border-color: var(--accent-red);
+                color: var(--accent-red);
+                display: none;
+            }
+
+            .logout-btn:hover {
+                background: rgba(231, 76, 60, 0.1);
+                box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+            }
+
+            .system-status {
+                margin-bottom: 30px;
+                position: relative;
+            }
+
+            .label {
+                font-size: 0.7rem;
+                color: var(--text-dim);
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: bold;
+            }
+
+            .status-bar {
+                background-color: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                padding: 15px 20px;
+                font-size: 0.9rem;
+                color: var(--text-dim);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                width: 100%;
+                z-index: 500;
+            }
+
+            .status-bar.error {
+                border-color: var(--accent-red);
+                color: var(--accent-red);
+                background: rgba(231, 76, 60, 0.05);
+                box-shadow: 0 0 15px rgba(231, 76, 60, 0.1);
+            }
+
+            .status-bar.floating {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 600px;
+                z-index: 9000;
+                background: var(--card-bg);
+                opacity: 0.95;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 0 1px var(--accent-red);
+                border-color: var(--accent-red);
+            }
+
+            #status-placeholder {
+                height: 50px;
+                display: none;
+            }
+
+            .blink {
+                animation: blinker 1s step-end infinite;
+                color: var(--system-accent-color);
+            }
+
+            .status-bar.error .blink {
+                color: var(--accent-red);
+            }
+
+            @keyframes blinker {
+                50% {
+                    opacity: 0;
+                }
+            }
+
+            .card {
+                background-color: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                padding: 25px;
+                margin-bottom: 20px;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .card:hover {
+                border-color: var(--system-accent-color);
+                background-color: var(--dim-color);
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+
+            #attendanceCard:hover {
+                background-color: transparent !important;
+                box-shadow: none !important;
+                border-color: var(--border-color);
+            }
+
+            @keyframes shake {
+                0%, 100% {
+                    transform: translateX(0);
+                }
+
+                25% {
+                    transform: translateX(-5px);
+                }
+
+                75% {
+                    transform: translateX(5px);
+                }
+            }
+
+            .error-shake {
+                animation: shake 0.4s ease-in-out;
+                border-color: var(--accent-red) !important;
+                box-shadow: 0 0 15px rgba(231, 76, 60, 0.2) !important;
+            }
+
+            .card-header-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: var(--text-color);
+            }
+
+            #copyFlash {
+                font-size: 0.7rem;
+                font-weight: bold;
+                color: #000;
+                background: var(--system-accent-color);
+                padding: 4px 8px;
+                border-radius: 4px;
+                opacity: 0;
+                transition: opacity 0.3s;
+                pointer-events: none;
+            }
+
+            #copyFlash.visible {
+                opacity: 1;
+            }
+
+            .search-input {
+                background: rgba(125,125,125,0.05);
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+                font-family: var(--font-stack);
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                width: 250px;
+                border-radius: 6px;
+                transition: all 0.3s;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: var(--system-accent-color);
+                background: rgba(125,125,125,0.1);
+                width: 280px;
+            }
+
+            ::placeholder {
+                color: var(--text-dim);
+                opacity: 0.5;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .stat-box {
+                background: rgba(125,125,125,0.03);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .stat-val {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: var(--text-color);
+            }
+
+            .stat-lbl {
+                font-size: 0.7rem;
+                color: var(--text-dim);
+                margin-top: 5px;
+                text-transform: uppercase;
+            }
+
+            .human-list {
+                display: grid;
+                gap: 10px;
+                max-height: 500px;
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+
+            .human-list::-webkit-scrollbar, .text-output::-webkit-scrollbar {
+                width: 12px;
+            }
+
+            .human-list::-webkit-scrollbar-track, .text-output::-webkit-scrollbar-track {
+                background: transparent;
+                margin-block: 5px; }
+
+            .human-list::-webkit-scrollbar-thumb, .text-output::-webkit-scrollbar-thumb {
+                background-color: var(--border-color);
+                border-radius: 10px;
+                border: 4px solid transparent;
+                background-clip: content-box;
+            }
+
+            .human-list::-webkit-scrollbar-thumb:hover, .text-output::-webkit-scrollbar-thumb:hover {
+                background-color: var(--system-accent-color);
+            }
+
+            .human-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                background: rgba(125,125,125,0.02);
+                transition: all 0.15s ease-out;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .human-item:hover {
+                background: rgba(125,125,125,0.05);
+                transform: translateX(5px);
+                border-color: var(--system-accent-color);
+            }
+
+            .human-item:active {
+                transform: scale(0.98);
+            }
+
+            .human-item.present {
+                border-color: var(--accent-green);
+                background: rgba(46, 204, 113, 0.1);
+            }
+
+            .human-item.absent {
+                border-color: var(--accent-red);
+                background: rgba(231, 76, 60, 0.1);
+            }
+
+            .human-info {
+                font-size: 0.9rem;
+            }
+
+            .human-sub {
+                font-size: 0.75rem;
+                color: var(--text-dim);
+                display: block;
+                margin-top: 4px;
+            }
+
+            .status-badge {
+                font-size: 0.75rem;
+                font-weight: bold;
+                padding: 5px 12px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                color: var(--text-dim);
+                min-width: 80px;
+                text-align: center;
+                background: rgba(125,125,125,0.05);
+            }
+
+            .human-item.present .status-badge {
+                border-color: var(--accent-green);
+                color: var(--accent-green);
+                background: rgba(46, 204, 113, 0.1);
+                box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+            }
+
+            .human-item.absent .status-badge {
+                border-color: var(--accent-red);
+                color: var(--accent-red);
+                background: rgba(231, 76, 60, 0.1);
+                box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+            }
+
+            .toggle-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .toggle-chip {
+                background: transparent;
+                border: 1px solid var(--border-color);
+                color: var(--text-dim);
+                padding: 12px;
+                border-radius: 8px;
+                font-size: 0.8rem;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: all 0.2s;
+            }
+
+            .toggle-chip:hover {
+                background: rgba(125,125,125,0.05);
+            }
+
+            .toggle-chip.active {
+                background: var(--system-accent-color);
+                border-color: var(--system-accent-color);
+                color: #000;
+                box-shadow: 0 0 15px var(--dim-color);
+            }
+
+            .toggle-chip .icon {
+                font-size: 1rem;
+            }
+
+            .btn-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .sys-btn {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+                padding: 12px;
+                border-radius: 8px;
+                font-family: var(--font-stack);
+                font-size: 0.8rem;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-transform: uppercase;
+            }
+
+            .sys-btn:hover {
+                border-color: var(--system-accent-color);
+                color: var(--system-accent-color);
+                background: rgba(125,125,125,0.1);
+            }
+
+            .sys-btn.primary {
+                border-color: var(--system-accent-color);
+                color: var(--system-accent-color);
+            }
+
+            .sys-btn.primary:hover {
+                background: var(--system-accent-color);
+                color: #000;
+            }
+
+            .upload-area {
+                border: 2px dashed var(--border-color);
+                padding: 30px;
+                text-align: center;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .upload-area:hover {
+                border-color: var(--system-accent-color);
+                background: var(--dim-color);
+            }
+
+            input[type="file"] {
+                display: none;
+            }
+
+            .text-output {
+                width: 100%;
+                height: 200px;
+                background: var(--bg-color);
+                border: 1px solid var(--border-color);
+                color: var(--system-accent-color);
+                font-family: var(--font-stack);
+                font-size: 0.8rem;
+                padding: 20px;
+                resize: none;
+                border-radius: 8px;
+                display: none;
+                line-height: 1.6;
+                margin-top: 20px;
+            }
+
+            .hidden {
+                display: none !important;
+            }
+
+            footer {
+                margin-top: 50px;
+                padding-top: 20px;
+                border-top: 1px solid var(--border-color);
+                font-size: 0.7rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: border-color 0.3s ease;
+            }
+
+            .team-container {
+                display: inline-flex;
+                align-items: center;
+                min-height: 1rem;
+            }
+
+            .team-container::after {
+                content: '█';
+                margin-left: 5px;
+                animation: blink 1s infinite;
+                color: var(--system-accent-color);
+                font-size: 0.8rem;
+                line-height: 1;
+                transition: color 0.5s ease;
+            }
+
+            .team-separator {
+                margin: 0 8px;
+                font-weight: bold;
+                color: var(--system-accent-color);
+                transition: color 0.3s;
+            }
+
+            a.social-link {
+                color: inherit;
+                text-decoration: none;
+                margin-left: 15px;
+                transition: color 0.3s;
+            }
+
+            a.social-link:hover {
+                color: var(--system-accent-color);
+            }
+
+            .subject-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .subject-btn {
+                padding: 8px;
+                font-size: 0.75rem;
+            }
+
+            .subject-btn.active {
+                background: var(--system-accent-color);
+                color: #000;
+                border-color: var(--system-accent-color);
+            }
+
+            .toggle-row {
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                color: var(--text-dim);
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+
+            input[type="checkbox"] {
+                accent-color: var(--system-accent-color);
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body oncontextmenu="return false;">
+        <div id="custom-cursor"></div>
+        <div id="theme-overlay" class="overlay">
+            <div class="modal-card">
+                <h2 class="brand">VISUAL STYLE</h2>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px;">SELECT INTERFACE THEME</div>
+                <div class="palette-grid" id="themeGrid"></div>
+                <div class="toggle-row">
+                    <input type="checkbox" id="cursorToggle" onchange="toggleCursorPhysics(this.checked)">
+                    <label for="cursorToggle">ENABLE PHYSICS CURSOR</label>
+                </div>
+                <button class="sys-btn" onclick="toggleOverlay('theme-overlay', false)" style="width: 100%; margin-top: 25px;">CLOSE</button>
+            </div>
+        </div>
+        <div id="access-denied-screen">
+            <div class="lockdown-brand">AttendEX.</div>
+            <div class="lockdown-subtitle">CREATED BY TEAM NULLYEX</div>
+            <div class="denied-title">SYSTEM LOCKDOWN</div>
+            <div style="color: var(--text-dim); letter-spacing: 2px;">UNAUTHORIZED ENTRY ATTEMPT DETECTED</div>
+            <div class="creator-block">
+                <div class="creator-label">SYSTEM ARCHITECTS</div>
+                <div id="rotating-creators"></div>
+                <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-dim); border-top: 1px solid var(--border-color); padding-top: 15px;">THIS SOFTWARE IS PROPRIETARY PROPERTY OF THE ABOVE INDIVIDUALS.
+            </div>
+            </div>
+            <div class="denied-footer">YOU ARE NOT F*CKING ALLOWED HERE!
+        </div>
+        </div>
+        <div class="container" id="mainAppContainer">
+            <header>
+                <div class="brand">AttendEX.</div>
+                <div class="header-right">
+                    <div class="meta-info">
+                        SYS.NULLYEX: ONLINE<br>
+                        <span id="date-display">...</span>
+                    </div>
+                </div>
+            </header>
+            <div class="toolbar-container">
+                <button id="logout-btn" class="theme-btn logout-btn" onclick="clearSavedKey()">[ FORGET DEVICE ]</button>
+                <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
+            </div>
+            <div class="system-status">
+                <div class="label">01. SYSTEM STATUS</div>
+                <div id="status-placeholder"></div>
+                <div class="status-bar" id="statusBar">
+                    <span id="system-msg">> Waiting for database...</span>
+                    <span class="blink">█</span>
+                </div>
+            </div>
+            <div class="card hidden" id="uploadCard">
+                <div class="card-header-row">
+                    <div class="card-title" style="border:none; padding:0; margin:0;">DATA INPUT</div>
+                </div>
+                <div class="upload-area" onclick="document.getElementById('jsonFile').click()">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">📂</div>
+                    <div>CLICK TO LOAD STUDENT JSON</div>
+                    <div id="fileInfo" style="font-size: 0.8rem; margin-top: 5px; color: var(--system-accent-color);"></div>
+                </div>
+                <input type="file" id="jsonFile" accept=".json">
+            </div>
+            <div class="card hidden" id="subjectCard">
+                <div class="card-header-row">
+                    <div class="card-title" style="border:none; padding:0; margin:0;">SUBJECT SELECTION</div>
+                </div>
+                <div class="upload-area hidden" onclick="document.getElementById('subjectFile').click()">
+                    <div>📂 LOAD SUBJECTS JSON</div>
+                    <div id="subjectFileInfo" style="font-size: 0.8rem; margin-top: 5px; color: var(--system-accent-color);"></div>
+                </div>
+                <input type="file" id="subjectFile" accept=".json">
+                <div id="subjectButtons" class="subject-grid"></div>
+            </div>
+            <div id="mainDashboard" class="hidden">
+                <div class="stats-grid">
+                    <div class="stat-box" style="border-color: var(--system-accent-color);">
+                        <div class="stat-val" style="color: var(--system-accent-color);" id="totalCount">0</div>
+                        <div class="stat-lbl">TOTAL</div>
+                    </div>
+                    <div class="stat-box" style="border-color: var(--accent-green);">
+                        <div class="stat-val" style="color: var(--accent-green);" id="presentCount">0</div>
+                        <div class="stat-lbl">PRESENT</div>
+                    </div>
+                    <div class="stat-box" style="border-color: var(--accent-red);">
+                        <div class="stat-val" style="color: var(--accent-red);" id="absentCount">0</div>
+                        <div class="stat-lbl">ABSENT</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">BULK OPERATIONS</div>
+                    <div class="btn-grid">
+                        <button id="markAllPresent" class="sys-btn">ALL PRESENT</button>
+                        <button id="markAllAbsent" class="sys-btn">ALL ABSENT</button>
+                        <button id="clearAll" class="sys-btn">RESET ALL</button>
+                    </div>
+                </div>
+                <div class="card" id="attendanceCard">
+                    <div class="card-header-row">
+                        <div class="card-title" style="border:none; padding:0; margin:0;">ATTENDANCE REGISTER</div>
+                        <input type="text" id="searchHuman" placeholder="SEARCH DATABASE..." class="search-input">
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 10px;">> CLICK ROW TO TOGGLE STATUS</div>
+                    <div id="humanList" class="human-list"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header-row">
+                        <div class="card-title" style="border:none; padding:0; margin:0;">DATA EXPORT</div>
+                        <div id="copyFlash">COPIED TO CLIPBOARD</div>
+                    </div>
+                    <div class="toggle-grid" id="filterSection">
+                        <div class="toggle-chip active" id="t-present" onclick="toggleOption('t-present')">
+                            <span>FILTER: PRESENT ONLY</span>
+                            <span class="icon">○</span>
+                        </div>
+                        <div class="toggle-chip active" id="t-roll" onclick="toggleOption('t-roll')">
+                            <span>INCLUDE: ROLL NO</span>
+                            <span class="icon">●</span>
+                        </div>
+                        <div class="toggle-chip" id="t-name" onclick="toggleOption('t-name')">
+                            <span>INCLUDE: NAME</span>
+                            <span class="icon">○</span>
+                        </div>
+                        <div class="toggle-chip active" id="t-status" onclick="toggleOption('t-status')">
+                            <span>INCLUDE: STATUS</span>
+                            <span class="icon">●</span>
+                        </div>
+                    </div>
+                    <div class="btn-grid">
+                        <button id="downloadExcel" class="sys-btn primary">EXPORT .XLSX</button>
+                        <button id="downloadTxt" class="sys-btn">EXPORT .TXT</button>
+                        <button id="viewText" class="sys-btn">VIEW RAW</button>
+                    </div>
+                    <textarea id="textView" class="text-output" readonly></textarea>
+                </div>
+            </div>
+            <footer>
+                <div class="team-section">
+                    <span class="team-label">SYS.TEAM ::</span>
+                    <span id="team-display" class="team-container"></span>
+                </div>
+                <div>
+                    <a href="https://github.com/NullYex" class="social-link">GITHUB</a>
+                </div>
+            </footer>
+        </div>
+        <script>
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode == 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            const creators = ['AMRIT RANJAN', 'FARHAN KHALID', 'KAMRAN ALVI'];
+            function rotateCreators() {
+                const container = document.getElementById('rotating-creators');
+                if (!container)
+                    return;
+                container.innerHTML = '';
+                creators.forEach(name => {
+                    const div = document.createElement('div');
+                    div.className = 'creator-name';
+                    div.textContent = name;
+                    container.appendChild(div);
+                }
+                );
+                const first = creators.shift();
+                creators.push(first);
+            }
+
+            setInterval(rotateCreators, 5000);
+            rotateCreators();
+
+            let humans = [];
+            let attendance = {};
+            let subjects = [];
+            let selectedSubject = null;
+            let isRawViewOpen = false;
+            let isErrorState = false;
+
+            const THEMES = [{
+                id: 'dark',
+                name: 'Cyber Dark',
+                colors: ['#050505', '#2ecc71']
+            }, {
+                id: 'light',
+                name: 'Clean Light',
+                colors: ['#ffffff', '#10b981']
+            }, {
+                id: 'sunset',
+                name: 'Sunset Vibe',
+                colors: ['#2d1b24', '#f59e0b']
+            }, {
+                id: 'ocean',
+                name: 'Deep Ocean',
+                colors: ['#0f172a', '#38bdf8']
+            }, {
+                id: 'forest',
+                name: 'Neon Forest',
+                colors: ['#051a0d', '#4ade80']
+            }, {
+                id: 'berry',
+                name: 'Wild Berry',
+                colors: ['#4a0424', '#fb7185']
+            }, {
+                id: 'royal',
+                name: 'Royal Gold',
+                colors: ['#1e0b2e', '#fbbf24']
+            }, {
+                id: 'coffee',
+                name: 'Dark Roast',
+                colors: ['#271c19', '#d4a373']
+            }, {
+                id: 'midnight',
+                name: 'Midnight',
+                colors: ['#020617', '#6366f1']
+            }, ];
+
+            function applyTheme(themeId) {
+                document.documentElement.setAttribute('data-theme', themeId);
+                localStorage.setItem('attendex_theme', themeId);
+                const options = document.querySelectorAll('.palette-option');
+                if (options.length > 0) {
+                    options.forEach(el => {
+                        el.classList.toggle('active', el.dataset.theme === themeId);
+                    }
+                    );
+                }
+                const btn = document.getElementById('theme-toggle');
+                if (btn) {
+                    const currentTheme = THEMES.find(t => t.id === themeId);
+                    if (currentTheme)
+                        btn.textContent = `[THEME: ${currentTheme.name.toUpperCase()}]`;
+                }
+            }
+
+            function toggleCursorPhysics(isEnabled) {
+                const body = document.body;
+                const checkbox = document.getElementById('cursorToggle');
+                if (isEnabled) {
+                    body.classList.add('custom-cursor-active');
+                    localStorage.setItem('cursor_physics', 'enabled');
+                    if (checkbox)
+                        checkbox.checked = true;
+                } else {
+                    body.classList.remove('custom-cursor-active');
+                    localStorage.setItem('cursor_physics', 'disabled');
+                    if (checkbox)
+                        checkbox.checked = false;
+                }
+            }
+
+            function generateThemeGrid() {
+                const grid = document.getElementById('themeGrid');
+                grid.innerHTML = '';
+                THEMES.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'palette-option';
+                    div.dataset.theme = t.id;
+                    div.onclick = () => applyTheme(t.id);
+                    div.innerHTML = `
+                    <div class="p-col" style="background:${t.colors[0]}"></div>
+                    <div class="p-col" style="background:${t.colors[1]}"></div>
+                    <div style="position:absolute; bottom:5px; left:0; width:100%; text-align:center; font-size:0.6rem; color:#fff; text-shadow:0 1px 2px #000; font-weight:bold;">${t.name.toUpperCase()}</div>
+                `;
+                    grid.appendChild(div);
+                }
+                );
+            }
+
+            function toggleOverlay(id, show) {
+                const el = document.getElementById(id);
+                if (show)
+                    el.classList.add('active');
+                else
+                    el.classList.remove('active');
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                autoLoadJSON();
+                autoLoadSubjectJSON();
+                generateThemeGrid();
+                const savedTheme = localStorage.getItem('attendex_theme') || 'dark';
+                const savedCursor = localStorage.getItem('cursor_physics');
+                const shouldEnable = savedCursor === 'enabled' || savedCursor === null;
+                toggleCursorPhysics(shouldEnable);
+                applyTheme(savedTheme);
+                const dateEl = document.getElementById('date-display');
+                const now = new Date();
+                const options = {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                dateEl.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+            }
+            );
+
+            function showAccessDenied() {
+                document.getElementById('mainAppContainer').style.display = 'none';
+                document.getElementById('access-denied-screen').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function setSystemMsg(msg, isError=false) {
+                const bar = document.getElementById('statusBar');
+                document.getElementById('system-msg').textContent = "> " + msg;
+                isErrorState = isError;
+                if (isError) {
+                    bar.classList.add('error');
+                    updateStatusVisibility();
+                    setTimeout( () => {
+                        bar.classList.remove('error');
+                        isErrorState = false;
+                        updateStatusVisibility();
+                        if (msg.includes("ERROR") || msg.includes("NULL")) {
+                            if (humans.length > 0)
+                                setSystemMsg("Ready for input.");
+                            else
+                                setSystemMsg("Waiting for database...");
+                        }
+                    }
+                    , 3000);
+                } else {
+                    bar.classList.remove('error');
+                    updateStatusVisibility();
+                }
+            }
+
+            window.addEventListener('scroll', updateStatusVisibility);
+
+            function updateStatusVisibility() {
+                const bar = document.getElementById('statusBar');
+                const placeholder = document.getElementById('status-placeholder');
+                if (isErrorState && window.scrollY > 150) {
+                    bar.classList.add('floating');
+                    placeholder.style.display = 'block';
+                } else {
+                    bar.classList.remove('floating');
+                    placeholder.style.display = 'none';
+                }
+            }
+
+            function validateExport(isFilterCheck=false) {
+                if (!selectedSubject) {
+                    setSystemMsg("ERROR: NO SUBJECT SELECTED", true);
+                    const subCard = document.getElementById('subjectCard');
+                    subCard.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    subCard.classList.add('error-shake');
+                    setTimeout( () => subCard.classList.remove('error-shake'), 500);
+                    return false;
+                }
+                if (document.getElementById('t-present').classList.contains('active')) {
+                    let pCount = 0;
+                    Object.values(attendance).forEach(s => {
+                        if (s === true)
+                            pCount++
+                    }
+                    );
+                    if (pCount === 0) {
+                        setSystemMsg("DATA NULL: NO RECORDS MATCH FILTER", true);
+                        if (isFilterCheck) {
+                            const filterDiv = document.getElementById('filterSection');
+                            filterDiv.classList.add('error-shake');
+                            setTimeout( () => filterDiv.classList.remove('error-shake'), 500);
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            const LOCAL_MASK = "AttendEX_Sec_yex";
+            function maskAndSaveKey(realPassword) {
+                try {
+                    const masked = CryptoJS.AES.encrypt(realPassword, LOCAL_MASK).toString();
+                    localStorage.setItem('attendex_secret', masked);
+                } catch (e) {
+                    console.error("Storage failed");
+                }
+            }
+
+            function getUnmaskedKey() {
+                const stored = localStorage.getItem('attendex_secret');
+                if (!stored)
+                    return null;
+                try {
+                    const bytes = CryptoJS.AES.decrypt(stored, LOCAL_MASK);
+                    const originalPass = bytes.toString(CryptoJS.enc.Utf8);
+                    return originalPass || null;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function clearSavedKey() {
+                if (confirm("Are u sure u want to forget this device? You will need the PASS next time...")) {
+                    localStorage.removeItem('attendex_secret');
+                    location.reload();
+                }
+            }
+
+            async function autoLoadJSON() {
+                try {
+                    const response = await fetch('humans-xD.json');
+                    if (!response.ok)
+                        throw new Error('404');
+                    const fileContent = await response.text();
+
+                    try {
+                        const data = JSON.parse(fileContent);
+                        loadHumansData(data, "humans-xD.json (Public)");
+                    } catch (e) {
+                        const savedKey = getUnmaskedKey();
+                        if (savedKey) {
+                            try {
+                                const bytes = CryptoJS.AES.decrypt(fileContent, savedKey);
+                                const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+                                if (decryptedString) {
+                                    const data = JSON.parse(decryptedString);
+                                    loadHumansData(data, "humans-xD.json (Auto-Unlocked)");
+                                    setSystemMsg("Idetnity Verified via Saved Key.");
+                                    document.getElementById('logout-btn').style.display = 'block';
+                                    return;
+                                }
+                            } catch (err) {
+                                localStorage.removeItem('attendex_secret');
+                            }
+                        }
+
+                        let passwordInput = prompt("⚡ AttendEX | By NullYex \n🔐 ENTER DECRYPTION KEY:");
+
+                        if (!passwordInput) {
+                            showAccessDenied();
+                            return;
+                        }
+
+                        let shouldSave = false;
+                        if (passwordInput.endsWith('#save')) {
+                            shouldSave = true;
+                            passwordInput = passwordInput.replace('#save', '');
+                        }
+
+                        try {
+                            const bytes = CryptoJS.AES.decrypt(fileContent, passwordInput);
+                            const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+                            if (!decryptedString)
+                                throw new Error("Decryption failed");
+
+                            const data = JSON.parse(decryptedString);
+
+                            if (shouldSave) {
+                                maskAndSaveKey(passwordInput);
+                                alert("✅ Devcie Rememberred! You won't be asked again.");
+                                document.getElementById('logout-btn').style.display = 'block';
+                            }
+
+                            loadHumansData(data, "humans-xD.json (Unlocked)");
+                        } catch (decryptionError) {
+                            showAccessDenied();
+                        }
+                    }
+                } catch (error) {
+                    setSystemMsg("Database missing. are you authorized??...");
+                    //document.getElementById('uploadCard').classList.remove('hidden');
+                }
+            }
+
+            async function autoLoadSubjectJSON() {
+                try {
+                    const response = await fetch('subjects-why-not.json');
+                    if (!response.ok)
+                        throw new Error('404');
+                    subjects = await response.json();
+                    loadSubjectsUI("subjects-why-not.json (Auto)");
+                } catch (error) {
+                    console.log("Subject auto-load failed");
+                }
+            }
+
+            function loadHumansData(data, sourceName) {
+                humans = data;
+                attendance = {};
+                humans.forEach( (h, i) => attendance[i] = null);
+                document.getElementById('fileInfo').textContent = `Loaded ${humans.length} records from ${sourceName}`;
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                document.getElementById('uploadCard').classList.add('hidden');
+                setSystemMsg("Database Loaded. Ready for input.");
+                displayHumans();
+                updateStats();
+            }
+
+            document.getElementById('jsonFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file)
+                    return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        loadHumansData(data, file.name);
+                    } catch (e) {
+                        alert("Invalid JSON");
+                    }
+                }
+                ;
+                reader.readAsText(file);
+            });
+
+            document.getElementById('subjectFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file)
+                    return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        subjects = JSON.parse(event.target.result);
+                        loadSubjectsUI(file.name);
+                    } catch (e) {
+                        alert("Invalid Subject JSON");
+                    }
+                }
+                ;
+                reader.readAsText(file);
+            });
+
+            function loadSubjectsUI(sourceName) {
+                const container = document.getElementById('subjectButtons');
+                container.innerHTML = '';
+                document.getElementById('subjectCard').classList.remove('hidden');
+                document.getElementById('subjectFileInfo').textContent = `Loaded from ${sourceName}`;
+                subjects.forEach( (sub, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'sys-btn subject-btn';
+                    btn.textContent = sub.name || sub;
+                    btn.id = `sub-btn-${idx}`;
+                    btn.onclick = () => selectSubject(idx, sub);
+                    container.appendChild(btn);
+                }
+                );
+                if (subjects.length === 1)
+                    selectSubject(0, subjects[0]);
+            }
+
+            function selectSubject(idx, sub) {
+                selectedSubject = sub;
+                document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(`sub-btn-${idx}`).classList.add('active');
+                setSystemMsg(`Subject Selected: ${sub.name || sub}`);
+                if (isRawViewOpen)
+                    updateAndCopyRaw();
+            }
+
+            document.getElementById('searchHuman').addEventListener('input', (e) => {
+                displayHumans(e.target.value.toLowerCase());
+            }
+            );
+
+            function displayHumans(filterTerm='') {
+                const container = document.getElementById('humanList');
+                container.innerHTML = '';
+                humans.forEach( (human, index) => {
+                    if (filterTerm) {
+                        const name = human.name.toLowerCase();
+                        const roll = String(human.rollNo).toLowerCase();
+                        const enroll = String(human.enrollmentNo).toLowerCase();
+                        if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm))
+                            return;
+                    }
+                    const item = document.createElement('div');
+                    item.className = 'human-item';
+                    let statusText = "---";
+                    if (attendance[index] === true) {
+                        item.classList.add('present');
+                        statusText = "PRESENT";
+                    } else if (attendance[index] === false) {
+                        item.classList.add('absent');
+                        statusText = "ABSENT";
+                    }
+                    item.onclick = () => cycleStatus(index);
+                    item.innerHTML = `
+                    <div class="human-info">
+                        <strong>${human.name}</strong>
+                        <span class="human-sub">Roll: ${human.rollNo} | ID: ${human.enrollmentNo}</span>
+                    </div>
+                    <div class="status-badge">${statusText}</div>
+                `;
+                    container.appendChild(item);
+                }
+                );
+            }
+
+            window.cycleStatus = function(index) {
+                if (attendance[index] === null)
+                    attendance[index] = true;
+                else if (attendance[index] === true)
+                    attendance[index] = false;
+                else
+                    attendance[index] = null;
+                const currentSearch = document.getElementById('searchHuman').value.toLowerCase();
+                displayHumans(currentSearch);
+                updateStats();
+                if (isRawViewOpen)
+                    updateAndCopyRaw();
+            }
+            ;
+
+            function updateStats() {
+                let p = 0
+                  , a = 0;
+                Object.values(attendance).forEach(s => {
+                    if (s === true)
+                        p++;
+                    if (s === false)
+                        a++;
+                }
+                );
+                document.getElementById('totalCount').textContent = humans.length;
+                document.getElementById('presentCount').textContent = p;
+                document.getElementById('absentCount').textContent = a;
+            }
+
+            document.getElementById('markAllPresent').onclick = () => {
+                humans.forEach( (_, i) => attendance[i] = true);
+                refreshUI();
+            }
+            ;
+            document.getElementById('markAllAbsent').onclick = () => {
+                humans.forEach( (_, i) => attendance[i] = false);
+                refreshUI();
+            }
+            ;
+            document.getElementById('clearAll').onclick = () => {
+                humans.forEach( (_, i) => attendance[i] = null);
+                refreshUI();
+            }
+            ;
+
+            function refreshUI() {
+                const currentSearch = document.getElementById('searchHuman').value.toLowerCase();
+                displayHumans(currentSearch);
+                updateStats();
+                if (isRawViewOpen)
+                    updateAndCopyRaw();
+            }
+
+            function toggleOption(id) {
+                const el = document.getElementById(id);
+                el.classList.toggle('active');
+                const icon = el.querySelector('.icon');
+                icon.textContent = el.classList.contains('active') ? '●' : '○';
+                if (isRawViewOpen)
+                    updateAndCopyRaw();
+            }
+
+            function getExportData() {
+                const onlyPresent = document.getElementById('t-present').classList.contains('active');
+                const useName = document.getElementById('t-name').classList.contains('active');
+                const useRoll = document.getElementById('t-roll').classList.contains('active');
+                const useStatus = document.getElementById('t-status').classList.contains('active');
+                let data = [];
+                humans.forEach( (h, i) => {
+                    if (onlyPresent && attendance[i] !== true)
+                        return;
+                    let row = {};
+                    if (useName)
+                        row['Name'] = h.name;
+                    if (useRoll)
+                        row['Roll No'] = h.rollNo;
+                    if (true)
+                        row['Enrollment'] = h.enrollmentNo;
+                    if (useStatus)
+                        row['Status'] = attendance[i] === true ? 'Present' : (attendance[i] === false ? 'Absent' : 'Unmarked');
+                    data.push(row);
+                }
+                );
+                return data;
+            }
+
+            function generateRawText() {
+                const data = getExportData();
+                const subject = selectedSubject ? (selectedSubject.name || selectedSubject) : "Unknown Subject";
+                let txt = `ATTENDANCE RPT - SUBJECT: ${subject}\nDATE: ${new Date().toLocaleString()}\n----------------------------\n`;
+                data.forEach(row => {
+                    txt += Object.values(row).join(" | ") + "\n";
+                }
+                );
+                return txt;
+            }
+
+            async function updateAndCopyRaw() {
+                const txt = generateRawText();
+                const area = document.getElementById('textView');
+                area.value = txt;
+                try {
+                    await navigator.clipboard.writeText(txt);
+                    showFlash();
+                } catch (e) {}
+            }
+
+            function showFlash() {
+                const f = document.getElementById('copyFlash');
+                f.classList.add('visible');
+                setTimeout( () => f.classList.remove('visible'), 1500);
+            }
+
+            document.getElementById('viewText').onclick = () => {
+                if (!validateExport(true))
+                    return;
+                const area = document.getElementById('textView');
+                if (area.style.display === 'block') {
+                    area.style.display = 'none';
+                    isRawViewOpen = false;
+                } else {
+                    area.style.display = 'block';
+                    isRawViewOpen = true;
+                    updateAndCopyRaw();
+                }
+            }
+            ;
+
+            document.getElementById('downloadTxt').onclick = () => {
+                if (!validateExport())
+                    return;
+                const txt = generateRawText();
+                const blob = new Blob([txt],{
+                    type: 'text/plain'
+                });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `Attendance_${new Date().toISOString().slice(0, 10)}.txt`;
+                a.click();
+            }
+            ;
+
+            document.getElementById('downloadExcel').onclick = () => {
+                if (!validateExport())
+                    return;
+                const data = getExportData();
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+                XLSX.writeFile(wb, `Attendance_${new Date().toISOString().slice(0, 10)}.xlsx`);
+            }
+            ;
+
+            const cursor = document.getElementById('custom-cursor');
+            let mouseX = 0
+              , mouseY = 0
+              , cursorX = 0
+              , cursorY = 0;
+            const speed = 0.5;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+            );
+            document.body.addEventListener('mouseover', (e) => {
+                if (e.target.closest('button, .card, input, .upload-area, .human-item, .toggle-chip')) {
+                    document.body.classList.add('hovering');
+                } else {
+                    document.body.classList.remove('hovering');
+                }
+            }
+            );
+
+            function animateCursor() {
+                cursorX += (mouseX - cursorX) * speed;
+                cursorY += (mouseY - cursorY) * speed;
+                const dist = Math.sqrt(Math.pow(mouseX - cursorX, 2) + Math.pow(mouseY - cursorY, 2));
+                const scale = Math.min(dist / 15, 0.5);
+                const angle = Math.atan2(mouseY - cursorY, mouseX - cursorX) * 180 / Math.PI;
+                cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scale(${1 + scale}, ${1 - scale * 0.5})`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            const teamMembers = ['Amrit Ranjan', 'Farhan Khalid', 'Kamran Alvi'];
+            window.generateEncryptedString = function(dataObj, password) {
+                const jsonString = JSON.stringify(dataObj);
+                const encrypted = CryptoJS.AES.encrypt(jsonString, password).toString();
+                console.log(encrypted);
+                return encrypted;
+            }
+            ;
+
+            const teamContainer = document.getElementById('team-display');
+            let separators = ['|', '●'];
+            const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+            async function typeWriterLoop() {
+                while (true) {
+                    const currentSymbol = separators[Math.floor(Math.random() * separators.length)];
+                    for (let i = 0; i < teamMembers.length; i++) {
+                        const name = teamMembers[i];
+                        const span = document.createElement('span');
+                        teamContainer.appendChild(span);
+                        for (let char of name) {
+                            span.textContent += char;
+                            await sleep(50);
+                        }
+                        if (i < teamMembers.length - 1) {
+                            const sep = document.createElement('span');
+                            sep.className = 'team-separator';
+                            sep.textContent = currentSymbol;
+                            teamContainer.appendChild(sep);
+                            await sleep(50);
+                        }
+                    }
+                    await sleep(4000);
+                    while (teamContainer.lastChild) {
+                        teamContainer.removeChild(teamContainer.lastChild);
+                        await sleep(20);
+                    }
+                    const f = teamMembers.shift();
+                    teamMembers.push(f);
+                    await sleep(500);
+                }
+            }
+            typeWriterLoop();
+        </script>
+    </body>
+</html>
