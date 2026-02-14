@@ -1,0 +1,304 @@
+{
+  "schedule": {
+    "Monday": [
+      {
+        "startTime": "10:25",
+        "endTime": "11:20",
+        "subject": "Programming with Python Laboratory",
+        "faculty": "IBM Subject Expert",
+        "type": "Lab",
+        "batch": "All"
+      },
+      {
+        "startTime": "11:25",
+        "endTime": "12:20",
+        "subject": "Programming with Python Laboratory",
+        "faculty": "IBM Subject Expert",
+        "type": "Lab",
+        "batch": "All"
+      },
+      {
+        "startTime": "12:30",
+        "endTime": "13:25",
+        "subject": "Engineering Mathematics–II",
+        "faculty": "Prof. Deepa Mandal",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "14:25",
+        "subject": "Engineering Chemistry",
+        "faculty": "Dr. ChandraPrabha Sahu",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "14:50",
+        "endTime": "15:45",
+        "subject": "Manufacturing Practice",
+        "faculty": "Dr. Shailendra Kr Prashad",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "15:50",
+        "endTime": "16:45",
+        "subject": "Programming with Python",
+        "faculty": "IBM Subject Expert",
+        "type": "Theory",
+        "batch": "All"
+      }
+    ],
+    "Tuesday": [
+      {
+        "startTime": "10:25",
+        "endTime": "11:20",
+        "subject": "Engineering Mathematics–II",
+        "faculty": "Prof. Deepa Mandal",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "11:25",
+        "endTime": "12:20",
+        "subject": "Programming with Python",
+        "faculty": "IBM Subject Expert",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "12:30",
+        "endTime": "13:25",
+        "subject": "English for Skill Enhancement",
+        "faculty": "Dr. Monika Singh",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "14:25",
+        "subject": "Engineering Chemistry",
+        "faculty": "Dr. ChandraPrabha Sahu",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "14:50",
+        "endTime": "15:45",
+        "subject": "Engineering Chemistry Laboratory (C2) / Engineering Workshop (C1)",
+        "faculty": "Mr. Abhijit Mandal / Mr. Jai Narayan",
+        "type": "Lab",
+        "batch": "Split"
+      },
+      {
+        "startTime": "15:50",
+        "endTime": "16:45",
+        "subject": "Engineering Chemistry Laboratory (C2) / Engineering Workshop (C1)",
+        "faculty": "Mr. Abhijit Mandal / Mr. Jai Narayan",
+        "type": "Lab",
+        "batch": "Split"
+      }
+    ],
+    "Wednesday": [
+      {
+        "startTime": "10:25",
+        "endTime": "11:20",
+        "subject": "Programming with Python",
+        "faculty": "IBM Subject Expert",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "11:25",
+        "endTime": "12:20",
+        "subject": "Universal Human Values",
+        "faculty": "Dr. Binod Kumar Choudhary",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "12:30",
+        "endTime": "13:25",
+        "subject": "English Language & Comm Skills Lab (C1) / Engineering Workshop (C2)",
+        "faculty": "Dr. Monika Singh / Mr. Jai Narayan",
+        "type": "Lab",
+        "batch": "Split"
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "14:25",
+        "subject": "Engineering Chemistry",
+        "faculty": "Dr. ChandraPrabha Sahu",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "14:50",
+        "endTime": "15:45",
+        "subject": "Engineering Chemistry",
+        "faculty": "Dr. ChandraPrabha Sahu",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "15:50",
+        "endTime": "16:45",
+        "subject": "Manufacturing Practice",
+        "faculty": "Dr. Shailendra Kr Prashad",
+        "type": "Theory",
+        "batch": "All"
+      }
+    ],
+    "Thursday": [
+      {
+        "startTime": "10:25",
+        "endTime": "11:20",
+        "subject": "Engineering Chemistry Laboratory (C1) / Design Thinking and Idea Laboratory (C2)",
+        "faculty": "Mr. Abhijit Mandal / Mr. Santosh Kumar Sah",
+        "type": "Lab",
+        "batch": "Split"
+      },
+      {
+        "startTime": "11:25",
+        "endTime": "12:20",
+        "subject": "Engineering Chemistry Laboratory (C1) / Design Thinking and Idea Laboratory (C2)",
+        "faculty": "Mr. Abhijit Mandal / Mr. Santosh Kumar Sah",
+        "type": "Lab",
+        "batch": "Split"
+      },
+      {
+        "startTime": "12:30",
+        "endTime": "13:25",
+        "subject": "Engineering Chemistry",
+        "faculty": "Dr. ChandraPrabha Sahu",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "14:25",
+        "subject": "English for Skill Enhancement",
+        "faculty": "Dr. Monika Singh",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "14:50",
+        "endTime": "15:45",
+        "subject": "Engineering Mathematics–II",
+        "faculty": "Prof. Deepa Mandal",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "15:50",
+        "endTime": "16:45",
+        "subject": "Universal Human Values",
+        "faculty": "Dr. Binod Kumar Choudhary",
+        "type": "Theory",
+        "batch": "All"
+      }
+    ],
+    "Friday": [
+      {
+        "startTime": "10:25",
+        "endTime": "11:20",
+        "subject": "English for Skill Enhancement",
+        "faculty": "Dr. Monika Singh",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "11:25",
+        "endTime": "12:20",
+        "subject": "Engineering Chemistry",
+        "faculty": "Dr. ChandraPrabha Sahu",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "12:30",
+        "endTime": "13:25",
+        "subject": "Constitution Of India",
+        "faculty": "Dr. Prem Nath Suman",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "14:25",
+        "subject": "Engineering Mathematics–II",
+        "faculty": "Prof. Deepa Mandal",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "14:50",
+        "endTime": "15:45",
+        "subject": "Design Thinking and Idea Laboratory (C1) / English Language & Comm Skills Lab (C2)",
+        "faculty": "Mr. Santosh Kumar Sah / Dr. Monika Singh",
+        "type": "Lab",
+        "batch": "Split"
+      },
+      {
+        "startTime": "15:50",
+        "endTime": "16:45",
+        "subject": "Design Thinking and Idea Laboratory (C1) / English Language & Comm Skills Lab (C2)",
+        "faculty": "Mr. Santosh Kumar Sah / Dr. Monika Singh",
+        "type": "Lab",
+        "batch": "Split"
+      }
+    ],
+    "Saturday": [
+      {
+        "startTime": "10:25",
+        "endTime": "11:20",
+        "subject": "Programming with Python",
+        "faculty": "IBM Subject Expert",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "11:25",
+        "endTime": "12:20",
+        "subject": "Library",
+        "faculty": "N/A",
+        "type": "Library",
+        "batch": "All"
+      },
+      {
+        "startTime": "12:30",
+        "endTime": "13:25",
+        "subject": "Programming with Python",
+        "faculty": "IBM Subject Expert",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "14:25",
+        "subject": "Engineering Mathematics–II",
+        "faculty": "Prof. Deepa Mandal",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "14:50",
+        "endTime": "15:45",
+        "subject": "Constitution Of India",
+        "faculty": "Dr. Prem Nath Suman",
+        "type": "Theory",
+        "batch": "All"
+      },
+      {
+        "startTime": "15:50",
+        "endTime": "16:45",
+        "subject": "English for Skill Enhancement",
+        "faculty": "Dr. Monika Singh",
+        "type": "Theory",
+        "batch": "All"
+      }
+    ]
+  }
+}
