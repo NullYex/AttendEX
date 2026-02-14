@@ -611,22 +611,21 @@
                 padding-right: 5px;
             }
 
-            .human-list::-webkit-scrollbar, .text-output::-webkit-scrollbar {
-                width: 12px;
+            .human-list::-webkit-scrollbar, .text-output::-webkit-scrollbar, .timeline-container::-webkit-scrollbar, .day-tabs-container::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
             }
 
-            .human-list::-webkit-scrollbar-track, .text-output::-webkit-scrollbar-track {
+            .human-list::-webkit-scrollbar-track, .text-output::-webkit-scrollbar-track, .timeline-container::-webkit-scrollbar-track, .day-tabs-container::-webkit-scrollbar-track {
                 background: transparent;
-                margin-block: 5px; }
+                margin-block: 2px; }
 
-            .human-list::-webkit-scrollbar-thumb, .text-output::-webkit-scrollbar-thumb {
+            .human-list::-webkit-scrollbar-thumb, .text-output::-webkit-scrollbar-thumb, .timeline-container::-webkit-scrollbar-thumb, .day-tabs-container::-webkit-scrollbar-thumb {
                 background-color: var(--border-color);
                 border-radius: 10px;
-                border: 4px solid transparent;
-                background-clip: content-box;
             }
 
-            .human-list::-webkit-scrollbar-thumb:hover, .text-output::-webkit-scrollbar-thumb:hover {
+            .human-list::-webkit-scrollbar-thumb:hover, .text-output::-webkit-scrollbar-thumb:hover, .timeline-container::-webkit-scrollbar-thumb:hover, .day-tabs-container::-webkit-scrollbar-thumb:hover {
                 background-color: var(--system-accent-color);
             }
 
@@ -857,24 +856,6 @@
                 color: var(--system-accent-color);
             }
 
-            .subject-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 10px;
-                margin-top: 15px;
-            }
-
-            .subject-btn {
-                padding: 8px;
-                font-size: 0.75rem;
-            }
-
-            .subject-btn.active {
-                background: var(--system-accent-color);
-                color: #000;
-                border-color: var(--system-accent-color);
-            }
-
             .toggle-row {
                 margin-top: 20px;
                 padding-top: 20px;
@@ -893,6 +874,202 @@
                 width: 16px;
                 height: 16px;
                 cursor: pointer;
+            }
+
+            .day-tabs-container {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .day-tab {
+                padding: 8px 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--text-dim);
+                cursor: pointer;
+                white-space: nowrap;
+                transition: all 0.2s;
+                background: rgba(125,125,125,0.05);
+            }
+
+            .day-tab:hover {
+                border-color: var(--system-accent-color);
+                color: var(--text-color);
+            }
+
+            .day-tab.active {
+                background: var(--system-accent-color);
+                color: #000;
+                border-color: var(--system-accent-color);
+                box-shadow: 0 0 10px var(--dim-color);
+            }
+
+            .timeline-container {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                max-height: 400px;
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+
+            .timeline-slot {
+                display: flex;
+                background: rgba(255,255,255,0.02);
+                border: 1px solid var(--border-color);
+                border-left: 3px solid var(--border-color);
+                border-radius: 8px;
+                padding: 10px 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+                align-items: center;
+            }
+
+            .timeline-slot:hover {
+                transform: translateX(5px);
+                background: rgba(255,255,255,0.05);
+                border-color: var(--system-accent-color);
+            }
+
+            .timeline-slot.active-now {
+                border-color: var(--system-accent-color);
+                border-left-width: 6px;
+                background: var(--dim-color);
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            }
+
+            .timeline-slot.active-now::after {
+                content: 'CURRENTLY ACTIVE';
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                font-size: 0.5rem;
+                font-weight: 900;
+                color: var(--system-accent-color);
+                opacity: 0.7;
+            }
+
+            .timeline-slot.selected {
+                border-color: var(--text-color);
+                border-left-color: var(--text-color);
+                background: rgba(255,255,255,0.08);
+            }
+
+            .slot-time {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-width: 70px;
+                border-right: 1px solid var(--border-color);
+                padding-right: 12px;
+                margin-right: 12px;
+                text-align: right;
+            }
+
+            .t-start {
+                font-size: 0.9rem;
+                font-weight: bold;
+                color: var(--text-color);
+            }
+
+            .t-end {
+                font-size: 0.7rem;
+                color: var(--text-dim);
+            }
+
+            .slot-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .s-name {
+                font-size: 0.85rem;
+                font-weight: bold;
+                color: var(--text-color);
+                margin-bottom: 4px;
+            }
+
+            .s-faculty {
+                font-size: 0.7rem;
+                color: var(--text-dim);
+            }
+
+            .s-type {
+                font-size: 0.6rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-top: 5px;
+                display: inline-block;
+                padding: 2px 6px;
+                border-radius: 4px;
+                background: rgba(0,0,0,0.2);
+                width: fit-content;
+            }
+
+            .type-Theory {
+                color: var(--system-accent-color);
+            }
+
+            .type-Lab {
+                color: #e74c3c;
+            }
+
+            .type-Library {
+                color: #f1c40f;
+            }
+
+            @media (max-width: 600px) {
+                .container {
+                    padding: 10px;
+                }
+
+                .card {
+                    padding: 15px;
+                }
+
+                .timeline-slot {
+                    padding: 12px 10px;
+                    min-height: auto;
+                }
+
+                .slot-time {
+                    min-width: 50px;
+                    padding-right: 8px;
+                    margin-right: 8px;
+                }
+
+                .t-start {
+                    font-size: 0.85rem;
+                }
+
+                .t-end {
+                    font-size: 0.65rem;
+                }
+
+                .s-name {
+                    font-size: 0.85rem;
+                    line-height: 1.4;
+                    margin-bottom: 4px;
+                }
+
+                .s-faculty {
+                    line-height: 1.2;
+                }
+
+                .slot-info {
+                    min-width: 0;
+                    word-wrap: break-word;
+                }
             }
         </style>
     </head>
@@ -957,16 +1134,17 @@
                 </div>
                 <input type="file" id="jsonFile" accept=".json">
             </div>
-            <div class="card hidden" id="subjectCard">
+            <div class="card hidden" id="smartScheduleCard">
                 <div class="card-header-row">
-                    <div class="card-title" style="border:none; padding:0; margin:0;">SUBJECT SELECTION</div>
+                    <div class="card-title">SMART SCHEDULE</div>
+                    <div id="autoStatusBadge" class="status-badge" style="display:none; border-color: var(--system-accent-color); color: var(--system-accent-color);">AUTO-DETECTED</div>
                 </div>
-                <div class="upload-area hidden" onclick="document.getElementById('subjectFile').click()">
-                    <div>📂 LOAD SUBJECTS JSON</div>
-                    <div id="subjectFileInfo" style="font-size: 0.8rem; margin-top: 5px; color: var(--system-accent-color);"></div>
-                </div>
-                <input type="file" id="subjectFile" accept=".json">
-                <div id="subjectButtons" class="subject-grid"></div>
+                <div class="day-tabs-container" id="dayTabs"></div>
+                <div class="timeline-container" id="timelineView"></div>
+                <!-- <div style="margin-top: 15px; font-size: 0.7rem; color: var(--text-dim); text-align: right; cursor: pointer;" onclick="document.getElementById('ttFile').click()">
+                    [ LOAD CUSTOM TT.JSON ]
+                </div> -->
+                <input type="file" id="ttFile" accept=".json" style="display:none">
             </div>
             <div id="mainDashboard" class="hidden">
                 <div class="stats-grid">
@@ -1087,10 +1265,12 @@
 
             let humans = [];
             let attendance = {};
-            let subjects = [];
+            let timetableData = {};
             let selectedSubject = null;
             let isRawViewOpen = false;
             let isErrorState = false;
+            let isManualOverride = false;
+            let autoCheckInterval = null;
 
             const THEMES = [{
                 id: 'dark',
@@ -1261,7 +1441,7 @@
             function validateExport(isFilterCheck=false) {
                 if (!selectedSubject) {
                     setSystemMsg("ERROR: NO SUBJECT SELECTED", true);
-                    const subCard = document.getElementById('subjectCard');
+                    const subCard = document.getElementById('smartScheduleCard');
                     subCard.scrollIntoView({
                         behavior: 'smooth'
                     });
@@ -1390,12 +1570,194 @@
                     const response = await fetch('subjects-why-not.json');
                     if (!response.ok)
                         throw new Error('404');
-                    subjects = await response.json();
-                    loadSubjectsUI("subjects-why-not.json (Auto)");
+                    timetableData = await response.json();
+
+                    document.getElementById('smartScheduleCard').classList.remove('hidden');
+                    initTimetableUI();
+                    startAutoScheduler();
+
                 } catch (error) {
-                    console.log("Subject auto-load failed");
+                    console.log("Subjects JSON load failed, using fallback or manual upload");
                 }
             }
+
+            function initTimetableUI() {
+                const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const tabContainer = document.getElementById('dayTabs');
+                tabContainer.innerHTML = '';
+
+                days.forEach(day => {
+                    const btn = document.createElement('div');
+                    btn.className = 'day-tab';
+                    btn.textContent = day.substring(0, 3);
+                    btn.id = `tab-${day}`;
+                    btn.onclick = () => renderTimeline(day, true);
+                    tabContainer.appendChild(btn);
+                }
+                );
+
+                const todayIndex = new Date().getDay();
+                const dayMap = [null, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const currentDayName = dayMap[todayIndex] || "Monday";
+
+                renderTimeline(currentDayName);
+            }
+
+            function renderTimeline(dayName, isUserAction=false) {
+                if (isUserAction)
+                    isManualOverride = true;
+
+                document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+                const activeTab = document.getElementById(`tab-${dayName}`);
+                if (activeTab)
+                    activeTab.classList.add('active');
+
+                const container = document.getElementById('timelineView');
+                container.innerHTML = '';
+
+                const slots = timetableData[dayName];
+
+                if (!slots || slots.length === 0) {
+                    container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-dim);">NO CLASSES SCHEDULED FOR ${dayName.toUpperCase()}</div>`;
+                    return;
+                }
+
+                slots.forEach( (slot, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'timeline-slot';
+                    el.id = `slot-${dayName}-${index}`;
+
+                    el.onclick = () => {
+                        manualSelectSlot(slot, el.id);
+                    }
+                    ;
+
+                    el.innerHTML = `
+                        <div class="slot-time">
+                            <span class="t-start">${slot.startTime}</span>
+                            <span class="t-end">${slot.endTime}</span>
+                        </div>
+                        <div class="slot-info">
+                            <div class="s-name">${slot.subject}</div>
+                            <div class="s-faculty">${slot.faculty}</div>
+                            <div class="s-type type-${slot.type}">${slot.type} • ${slot.batch}</div>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                }
+                );
+
+                if (!isManualOverride)
+                    highlightCurrentSlot();
+            }
+
+            function startAutoScheduler() {
+                highlightCurrentSlot();
+                if (autoCheckInterval)
+                    clearInterval(autoCheckInterval);
+                autoCheckInterval = setInterval(highlightCurrentSlot, 30000);
+            }
+
+            function highlightCurrentSlot() {
+                if (isManualOverride)
+                    return;
+
+                const now = new Date();
+                const dayIndex = now.getDay();
+                const dayMap = [null, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const todayName = dayMap[dayIndex];
+
+                if (!todayName || !timetableData[todayName])
+                    return;
+
+                const activeTab = document.querySelector('.day-tab.active');
+                if (!activeTab || activeTab.textContent !== todayName.substring(0, 3)) {
+                    renderTimeline(todayName);
+                }
+
+                const getMinutes = (timeStr) => {
+                    const [h,m] = timeStr.split(':').map(Number);
+                    return h * 60 + m;
+                }
+                ;
+
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                let matchFound = false;
+
+                timetableData[todayName].forEach( (slot, index) => {
+                    const start = getMinutes(slot.startTime);
+                    const end = getMinutes(slot.endTime);
+
+                    const slotEl = document.getElementById(`slot-${todayName}-${index}`);
+                    if (slotEl) {
+                        slotEl.classList.remove('active-now');
+
+                        if (currentMinutes >= (start - 10) && currentMinutes < end) {
+                            slotEl.classList.add('active-now');
+                            if (!selectedSubject || selectedSubject.name !== slot.subject) {
+                                selectSubjectFromTimetable(slot, true);
+                            }
+                            slotEl.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                            matchFound = true;
+                        }
+                    }
+                }
+                );
+
+                const badge = document.getElementById('autoStatusBadge');
+                if (matchFound) {
+                    badge.style.display = 'block';
+                    badge.innerText = "AUTO-ACTIVE";
+                    badge.style.borderColor = "var(--system-accent-color)";
+                    badge.style.color = "var(--system-accent-color)";
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            function manualSelectSlot(slot, elementId) {
+                isManualOverride = true;
+                document.getElementById('autoStatusBadge').style.display = 'block';
+                document.getElementById('autoStatusBadge').innerText = "MANUAL OVERRIDE";
+                document.getElementById('autoStatusBadge').style.borderColor = "var(--text-dim)";
+                document.getElementById('autoStatusBadge').style.color = "var(--text-dim)";
+
+                document.querySelectorAll('.timeline-slot').forEach(el => el.classList.remove('selected'));
+                document.getElementById(elementId).classList.add('selected');
+
+                selectSubjectFromTimetable(slot, false);
+            }
+
+            function selectSubjectFromTimetable(slot, isAuto) {
+                selectedSubject = {
+                    name: slot.subject
+                };
+                setSystemMsg(isAuto ? `Auto-Selected: ${slot.subject}` : `Selected: ${slot.subject}`);
+                if (isRawViewOpen)
+                    updateAndCopyRaw();
+            }
+
+            document.getElementById('ttFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file)
+                    return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        timetableData = JSON.parse(event.target.result);
+                        document.getElementById('smartScheduleCard').classList.remove('hidden');
+                        initTimetableUI();
+                    } catch (e) {
+                        alert("Invalid TT JSON");
+                    }
+                }
+                ;
+                reader.readAsText(file);
+            });
+
 
             function loadHumansData(data, sourceName) {
                 humans = data;
@@ -1426,69 +1788,27 @@
                 reader.readAsText(file);
             });
 
-            document.getElementById('subjectFile').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file)
-                    return;
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        subjects = JSON.parse(event.target.result);
-                        loadSubjectsUI(file.name);
-                    } catch (e) {
-                        alert("Invalid Subject JSON");
-                    }
-                }
-                ;
-                reader.readAsText(file);
-            });
-
-            function loadSubjectsUI(sourceName) {
-                const container = document.getElementById('subjectButtons');
-                container.innerHTML = '';
-                document.getElementById('subjectCard').classList.remove('hidden');
-                document.getElementById('subjectFileInfo').textContent = `Loaded from ${sourceName}`;
-                subjects.forEach( (sub, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'sys-btn subject-btn';
-                    btn.textContent = sub.name || sub;
-                    btn.id = `sub-btn-${idx}`;
-                    btn.onclick = () => selectSubject(idx, sub);
-                    container.appendChild(btn);
-                }
-                );
-                if (subjects.length === 1)
-                    selectSubject(0, subjects[0]);
-            }
-
-            function selectSubject(idx, sub) {
-                selectedSubject = sub;
-                document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(`sub-btn-${idx}`).classList.add('active');
-                setSystemMsg(`Subject Selected: ${sub.name || sub}`);
-                if (isRawViewOpen)
-                    updateAndCopyRaw();
-            }
-
             document.getElementById('searchHuman').addEventListener('input', (e) => {
                 displayHumans(e.target.value.toLowerCase());
             }
             );
 
-            function displayHumans(filterTerm = '') {
+            function displayHumans(filterTerm='') {
                 const container = document.getElementById('humanList');
                 container.innerHTML = '';
                 const isTwoDigitSearch = /^\d{2}$/.test(filterTerm.trim());
-                humans.forEach((human, index) => {
+                humans.forEach( (human, index) => {
                     if (filterTerm) {
                         const name = human.name.toLowerCase();
                         const roll = String(human.rollNo).toLowerCase();
                         const enroll = String(human.enrollmentNo).toLowerCase();
 
                         if (isTwoDigitSearch) {
-                            if (!roll.includes(filterTerm)) return;
+                            if (!roll.includes(filterTerm))
+                                return;
                         } else {
-                            if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm)) return;
+                            if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm))
+                                return;
                         }
                     }
                     const item = document.createElement('div');
@@ -1681,7 +2001,7 @@
             }
             );
             document.body.addEventListener('mouseover', (e) => {
-                if (e.target.closest('button, .card, input, .upload-area, .human-item, .toggle-chip')) {
+                if (e.target.closest('button, .card, input, .upload-area, .human-item, .toggle-chip, .timeline-slot, .day-tab')) {
                     document.body.classList.add('hovering');
                 } else {
                     document.body.classList.remove('hovering');
@@ -1746,3 +2066,4 @@
         </script>
     </body>
 </html>
+
