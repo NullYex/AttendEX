@@ -1,4 +1,4 @@
-const CACHE_NAME = 'attendex-cache-v3';
+const CACHE_NAME = 'attendex-cache-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -12,14 +12,17 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return Promise.allSettled(
-        urlsToCache.map(url => cache.add(url).catch(err => console.log('SW: Cache add fail for', url)))
+        urlsToCache.map(url => {
+          return cache.add(new Request(url, { cache: 'reload' }))
+            .catch(err => console.log('SW: Cache add fail for', url));
+        })
       );
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
