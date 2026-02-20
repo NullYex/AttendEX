@@ -8,7 +8,7 @@ const urlsToCache = [
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js',
   'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap',
-  'https://img.icons8.com/liquid-glass/96/attendance-mark.png'
+  'https://avatars.githubusercontent.com/u/230855043?v=4'
 ];
 
 self.addEventListener('install', event => {
