@@ -353,10 +353,49 @@
                 transition: border-color 0.3s ease;
             }
 
+            .header-left {
+                display: flex;
+                flex-direction: column;
+            }
+
             .brand {
                 font-size: 2rem;
                 font-weight: bold;
                 letter-spacing: -2px;
+                line-height: 1;
+            }
+
+            .brand-subtitle {
+                font-size: 0.65rem;
+                color: var(--system-accent-color);
+                letter-spacing: 1px;
+                font-weight: bold;
+                text-transform: uppercase;
+                display: flex;
+                align-items: flex-start;
+                line-height: 1.1;
+                gap: 5px;
+            }
+
+            .scroller-container {
+                height: 2.2em;
+                overflow: hidden;
+                position: relative;
+                display: inline-flex;
+                -webkit-mask-image: linear-gradient(180deg, #000 40%, rgba(0,0,0,0.15) 100%);
+                mask-image: linear-gradient(180deg, #000 40%, rgba(0,0,0,0.15) 100%);
+            }
+
+            .scroller-content {
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            }
+
+            .scroller-content div {
+                height: 1.1em;
+                line-height: 1.1;
+                white-space: nowrap;
             }
 
             .header-right {
@@ -376,9 +415,16 @@
 
             .toolbar-container {
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 15px;
                 margin-bottom: 10px;
-                margin-top: 0;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .toolbar-actions {
+                display: flex;
                 gap: 10px;
             }
 
@@ -924,6 +970,7 @@
                 max-height: 400px;
                 overflow-y: auto;
                 padding-right: 5px;
+                position: relative;
             }
 
             .timeline-slot {
@@ -1110,7 +1157,9 @@
         </div>
         <div class="container" id="mainAppContainer">
             <header>
-                <div class="brand">AttendEX.</div>
+                <div class="header-left">
+                    <div class="brand">AttendEX.</div>
+                </div>
                 <div class="header-right">
                     <div class="meta-info">
                         SYS.NULLYEX: ONLINE<br>
@@ -1119,8 +1168,22 @@
                 </div>
             </header>
             <div class="toolbar-container">
-                <button id="logout-btn" class="theme-btn logout-btn" onclick="clearSavedKey()">[ FORGET DEVICE ]</button>
-                <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
+                <div class="brand-subtitle">
+                    BY
+                    <div class="scroller-container">
+                        <div class="scroller-content" id="headerScroller">
+                            <div>AMRIT RANJAN</div>
+                            <div>FARHAN KHALID</div>
+                            <div>KAMRAN ALVI</div>
+                            <div>AMRIT RANJAN</div>
+                            <div>FARHAN KHALID</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="toolbar-actions">
+                    <button id="logout-btn" class="theme-btn logout-btn" onclick="clearSavedKey()">[ FORGET DEVICE ]</button>
+                    <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
+                </div>
             </div>
             <div class="system-status">
                 <div class="label">01. SYSTEM STATUS</div>
@@ -1269,6 +1332,24 @@
 
             setInterval(rotateCreators, 5000);
             rotateCreators();
+
+            let scrollIndex = 0;
+            const headerScroller = document.getElementById('headerScroller');
+            if (headerScroller) {
+                setInterval(() => {
+                    scrollIndex++;
+                    headerScroller.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                    headerScroller.style.transform = `translateY(-${scrollIndex * 1.1}em)`;
+                    
+                    if (scrollIndex === 3) {
+                        setTimeout(() => {
+                            headerScroller.style.transition = 'none';
+                            headerScroller.style.transform = `translateY(0)`;
+                            scrollIndex = 0;
+                        }, 500);
+                    }
+                }, 2500);
+            }
 
             let humans = [];
             let attendance = {};
@@ -1525,7 +1606,7 @@
                                 if (decryptedString) {
                                     const data = JSON.parse(decryptedString);
                                     loadHumansData(data, "humans-xD.json (Auto-Unlocked)");
-                                    setSystemMsg("Idetnity Verified via Saved Key.");
+                                    setSystemMsg("Identity Verified via Saved Key.");
                                     document.getElementById('logout-btn').style.display = 'block';
                                     return;
                                 }
@@ -1557,7 +1638,7 @@
 
                             if (shouldSave) {
                                 maskAndSaveKey(passwordInput);
-                                alert("✅ Devcie Rememberred! You won't be asked again.");
+                                alert("✅ Device Remembered! You won't be asked again.");
                                 document.getElementById('logout-btn').style.display = 'block';
                             }
 
@@ -1567,7 +1648,7 @@
                         }
                     }
                 } catch (error) {
-                    setSystemMsg("Database missing. are you authorized??...");
+                    setSystemMsg("Database missing. Are you authorized??...");
                     //document.getElementById('uploadCard').classList.remove('hidden');
                 }
             }
@@ -1704,10 +1785,13 @@
                             if (!selectedSubject || selectedSubject.name !== slot.subject) {
                                 selectSubjectFromTimetable(slot, true);
                             }
-                            slotEl.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
+                            const timelineContainer = document.getElementById('timelineView');
+                            if (timelineContainer) {
+                                timelineContainer.scrollTo({
+                                    top: Math.max(0, slotEl.offsetTop - 15), 
+                                    behavior: 'smooth'
+                                });
+                            }
                             matchFound = true;
                         }
                     }
