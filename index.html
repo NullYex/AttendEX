@@ -1287,6 +1287,7 @@
                         <button id="downloadExcel" class="sys-btn primary">EXPORT .XLSX</button>
                         <button id="downloadTxt" class="sys-btn">EXPORT .TXT</button>
                         <button id="viewText" class="sys-btn">VIEW RAW</button>
+                        <button id="shareWhatsApp" class="sys-btn" style="border-color: #25D366; color: #25D366;">SHARE WA</button>
                     </div>
                     <textarea id="textView" class="text-output" readonly></textarea>
                 </div>
@@ -2064,6 +2065,15 @@
                     isRawViewOpen = true;
                     updateAndCopyRaw();
                 }
+            }
+            ;
+
+            document.getElementById('shareWhatsApp').onclick = () => {
+                if (!validateExport()) return;
+                const txt = generateRawText();
+                const encodedText = encodeURIComponent(txt);
+                const waUrl = `https://wa.me/?text=${encodedText}`;
+                window.open(waUrl, '_blank');
             }
             ;
 
