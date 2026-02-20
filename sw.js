@@ -1,4 +1,4 @@
-const CACHE_NAME = 'attendex-cache-v2';
+const CACHE_NAME = 'attendex-cache-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -63,3 +63,4 @@ self.addEventListener('fetch', event => {
     })
   );
 });
+
