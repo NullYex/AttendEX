@@ -548,14 +548,8 @@
 
             .card:hover {
                 border-color: var(--system-accent-color);
-                background-color: var(--dim-color);
-                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            }
-
-            #attendanceCard:hover {
                 background-color: transparent !important;
                 box-shadow: none !important;
-                border-color: var(--border-color);
             }
 
             @keyframes shake {
@@ -1930,7 +1924,10 @@
                     item.innerHTML = `
                     <div class="human-info">
                         <strong>${human.name}</strong>
-                        <span class="human-sub">Roll: ${human.rollNo} | ID: ${human.enrollmentNo}</span>
+                        <span class="human-sub" style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
+                            Roll: <span style="background: var(--dim-color); color: var(--system-accent-color); border: 1px solid var(--system-accent-color); padding: 1px 6px; border-radius: 5px; font-weight: 900; font-size: 0.75rem;">${human.rollNo}</span> 
+                            | ${human.enrollmentNo}
+                        </span>
                     </div>
                     <div class="status-badge">${statusText}</div>
                 `;
