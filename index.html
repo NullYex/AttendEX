@@ -976,45 +976,66 @@
 
             .timeline-slot {
                 display: flex;
-                background: rgba(255,255,255,0.02);
+                padding: 15px 20px;
                 border: 1px solid var(--border-color);
-                border-left: 3px solid var(--border-color);
-                border-radius: 8px;
-                padding: 10px 12px;
+                border-radius: 12px;
+                background: rgba(125,125,125,0.02);
+                transition: all 0.15s ease-out;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                user-select: none;
                 position: relative;
                 align-items: center;
             }
 
             .timeline-slot:hover {
+                background: rgba(125,125,125,0.05);
                 transform: translateX(5px);
-                background: rgba(255,255,255,0.05);
                 border-color: var(--system-accent-color);
             }
 
-            .timeline-slot.active-now {
-                border-color: var(--system-accent-color);
-                border-left-width: 6px;
-                background: var(--dim-color);
-                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            .timeline-slot:active {
+                transform: scale(0.98);
             }
 
             .timeline-slot.active-now::after {
-                content: 'CURRENTLY ACTIVE';
+                content: 'ACTIVE NOW';
                 position: absolute;
-                top: 5px;
-                right: 5px;
-                font-size: 0.5rem;
+                top: 10px;
+                right: 15px;
+                font-size: 0.6rem;
                 font-weight: 900;
                 color: var(--system-accent-color);
-                opacity: 0.7;
+                background: var(--bg-color);
+                padding: 2px 6px;
+                border-radius: 4px;
+                border: 1px solid var(--system-accent-color);
+                opacity: 0.9;
             }
 
             .timeline-slot.selected {
-                border-color: var(--text-color);
-                border-left-color: var(--text-color);
-                background: rgba(255,255,255,0.08);
+                border-color: var(--system-accent-color) !important;
+                background: var(--dim-color) !important;
+                box-shadow: inset 0 0 0 1px var(--system-accent-color), 0 0 15px var(--dim-color) !important;
+            }
+
+            .pebble-btn {
+                font-size: 0.7rem;
+                font-weight: bold;
+                padding: 6px 14px;
+                border-radius: 8px;
+                border: 2px solid var(--system-accent-color);
+                color: var(--system-accent-color);
+                background: transparent;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-transform: uppercase;
+                font-family: var(--font-stack);
+            }
+
+            .pebble-btn:hover {
+                background: var(--dim-color);
+                transform: scale(1.05);
+                box-shadow: 0 0 10px var(--dim-color);
             }
 
             .slot-time {
@@ -1099,8 +1120,14 @@
                 }
 
                 .timeline-slot {
-                    padding: 12px 10px;
+                    padding: 15px;
                     min-height: auto;
+                }
+
+                .timeline-slot.active-now::after {
+                    top: 10px;
+                    right: 15px;
+                    font-size: 0.5rem;
                 }
 
                 .slot-time {
@@ -1214,7 +1241,10 @@
             <div class="card hidden" id="smartScheduleCard">
                 <div class="card-header-row">
                     <div class="card-title">SMART SCHEDULE</div>
-                    <div id="autoStatusBadge" class="status-badge" style="display:none; border-color: var(--system-accent-color); color: var(--system-accent-color);">AUTO-DETECTED</div>
+                    <div style="position: relative; height: 28px; display: flex; align-items: center;">
+                        <div id="autoFlash" style="font-size: 0.7rem; font-weight: bold; color: #000; background: var(--system-accent-color); padding: 4px 8px; border-radius: 4px; opacity: 0; transition: opacity 0.3s; pointer-events: none; position: absolute; right: 0; white-space: nowrap;">AUTO MODE ENABLED</div>
+                        <button id="autoStatusBadge" class="pebble-btn" style="display:none; position: absolute; right: 0; white-space: nowrap;" onclick="resetToAuto()">MANUAL MODE</button>
+                    </div>
                 </div>
                 <div class="day-tabs-container" id="dayTabs"></div>
                 <div class="timeline-container" id="timelineView"></div>
@@ -1262,7 +1292,7 @@
                     <div class="toggle-grid" id="filterSection">
                         <div class="toggle-chip active" id="t-present" onclick="toggleOption('t-present')">
                             <span>FILTER: PRESENT ONLY</span>
-                            <span class="icon">○</span>
+                            <span class="icon">●</span>
                         </div>
                         <div class="toggle-chip active" id="t-roll" onclick="toggleOption('t-roll')">
                             <span>INCLUDE: ROLL NO</span>
@@ -1344,19 +1374,21 @@
             let scrollIndex = 0;
             const headerScroller = document.getElementById('headerScroller');
             if (headerScroller) {
-                setInterval(() => {
+                setInterval( () => {
                     scrollIndex++;
                     headerScroller.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
                     headerScroller.style.transform = `translateY(-${scrollIndex * 1.1}em)`;
                     
                     if (scrollIndex === 3) {
-                        setTimeout(() => {
+                        setTimeout( () => {
                             headerScroller.style.transition = 'none';
                             headerScroller.style.transform = `translateY(0)`;
                             scrollIndex = 0;
-                        }, 500);
+                        }
+                        , 500);
                     }
-                }, 2500);
+                }
+                , 2500);
             }
 
             let humans = [];
@@ -1466,7 +1498,27 @@
                     el.classList.remove('active');
             }
 
+            function initToggles() {
+                const toggleIds = ['t-present', 't-roll', 't-name', 't-status'];
+                toggleIds.forEach(id => {
+                    const saved = localStorage.getItem('attendex_' + id);
+                    const el = document.getElementById(id);
+
+                    if (saved === 'true') {
+                        el.classList.add('active');
+                    } else if (saved === 'false') {
+                        el.classList.remove('active');
+                    } else {
+                        localStorage.setItem('attendex_' + id, el.classList.contains('active'));
+                    }
+                    const icon = el.querySelector('.icon');
+                    icon.textContent = el.classList.contains('active') ? '●' : '○';
+                }
+                );
+            }
+
             window.addEventListener('DOMContentLoaded', () => {
+                initToggles();
                 autoLoadJSON();
                 autoLoadSubjectJSON();
                 generateThemeGrid();
@@ -1700,8 +1752,10 @@
             }
 
             function renderTimeline(dayName, isUserAction=false) {
-                if (isUserAction)
+                if (isUserAction) {
                     isManualOverride = true;
+                    updateBadgeToManual();
+                }
 
                 document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
                 const activeTab = document.getElementById(`tab-${dayName}`);
@@ -1759,7 +1813,22 @@
                     return;
 
                 const now = new Date();
-                const dayIndex = now.getDay();
+
+                // To test auto-selection, change to true and set your desired day & time.
+                const isTesting = false;
+                let dayIndex = now.getDay();
+                let currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                if (isTesting) {
+                    dayIndex = 4;
+                    // 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+                    const testHour = 12;
+                    // 24-hour format (e.g., 10 for 10 AM, 14 for 2 PM)
+                    const testMinute = 40;
+                    // Minutes
+                    currentMinutes = (testHour * 60) + testMinute;
+                }
+
                 const dayMap = [null, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 const todayName = dayMap[dayIndex];
 
@@ -1777,8 +1846,8 @@
                 }
                 ;
 
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                let matchFound = false;
+                let activeSlots = [];
+                let firstActiveEl = null;
 
                 timetableData[todayName].forEach( (slot, index) => {
                     const start = getMinutes(slot.startTime);
@@ -1790,51 +1859,127 @@
 
                         if (currentMinutes >= (start - 10) && currentMinutes < end) {
                             slotEl.classList.add('active-now');
-                            if (!selectedSubject || selectedSubject.name !== slot.subject) {
-                                selectSubjectFromTimetable(slot, true);
-                            }
-                            const timelineContainer = document.getElementById('timelineView');
-                            if (timelineContainer) {
-                                timelineContainer.scrollTo({
-                                    top: Math.max(0, slotEl.offsetTop - 15), 
-                                    behavior: 'smooth'
-                                });
-                            }
-                            matchFound = true;
+                            activeSlots.push(slot);
+                            if (!firstActiveEl)
+                                firstActiveEl = slotEl;
                         }
                     }
                 }
                 );
 
-                const badge = document.getElementById('autoStatusBadge');
-                if (matchFound) {
-                    badge.style.display = 'block';
-                    badge.innerText = "AUTO-ACTIVE";
-                    badge.style.borderColor = "var(--system-accent-color)";
-                    badge.style.color = "var(--system-accent-color)";
-                } else {
-                    badge.style.display = 'none';
+                if (activeSlots.length > 0) {
+                    let matchingSlotEl = null;
+                    let matchingSlot = null;
+
+                    activeSlots.forEach(s => {
+                        let subjectTitle = s.subject;
+                        if (s.batch && s.batch !== "All") {
+                            subjectTitle += ` (${s.batch})`;
+                        }
+                        if (selectedSubject && selectedSubject.name === subjectTitle) {
+                            matchingSlot = s;
+                            const sIndex = timetableData[todayName].indexOf(s);
+                            matchingSlotEl = document.getElementById(`slot-${todayName}-${sIndex}`);
+                        }
+                    }
+                    );
+
+                    document.querySelectorAll('.timeline-slot').forEach(el => el.classList.remove('selected'));
+
+                    if (!matchingSlot) {
+                        selectSubjectFromTimetable(activeSlots[0], true);
+                        if (firstActiveEl)
+                            firstActiveEl.classList.add('selected');
+                    } else {
+                        if (matchingSlotEl)
+                            matchingSlotEl.classList.add('selected');
+                    }
+
+                    const timelineContainer = document.getElementById('timelineView');
+                    const targetEl = matchingSlotEl || firstActiveEl;
+                    if (timelineContainer && targetEl) {
+                        timelineContainer.scrollTo({
+                            top: Math.max(0, targetEl.offsetTop - 15),
+                            behavior: 'smooth'
+                        });
+                    }
                 }
             }
 
             function manualSelectSlot(slot, elementId) {
-                isManualOverride = true;
-                document.getElementById('autoStatusBadge').style.display = 'block';
-                document.getElementById('autoStatusBadge').innerText = "MANUAL OVERRIDE";
-                document.getElementById('autoStatusBadge').style.borderColor = "var(--text-dim)";
-                document.getElementById('autoStatusBadge').style.color = "var(--text-dim)";
+                const clickedEl = document.getElementById(elementId);
+                const isActiveSlotClick = clickedEl.classList.contains('active-now');
+                if (isActiveSlotClick && !isManualOverride) {
+                    document.querySelectorAll('.timeline-slot').forEach(el => el.classList.remove('selected'));
+                    clickedEl.classList.add('selected');
 
-                document.querySelectorAll('.timeline-slot').forEach(el => el.classList.remove('selected'));
-                document.getElementById(elementId).classList.add('selected');
+                    let subjectTitle = slot.subject;
+                    if (slot.batch && slot.batch !== "All") {
+                        subjectTitle += ` (${slot.batch})`;
+                    }
 
-                selectSubjectFromTimetable(slot, false);
+                    selectedSubject = {
+                        name: subjectTitle,
+                        batch: slot.batch
+                    };
+
+                    setSystemMsg(`Auto-Track: Switched Active Batch to ${subjectTitle}`);
+
+                    if (humans.length > 0)
+                        refreshUI();
+                    if (isRawViewOpen)
+                        updateAndCopyRaw();
+                } else {
+                    isManualOverride = true;
+                    updateBadgeToManual();
+                    clearSelections();
+
+                    clickedEl.classList.add('selected');
+                    selectSubjectFromTimetable(slot, false);
+                }
+            }
+
+            function clearSelections() {
+                document.querySelectorAll('.timeline-slot').forEach(el => {
+                    el.classList.remove('selected');
+                }
+                );
+            }
+
+            function updateBadgeToManual() {
+                const badge = document.getElementById('autoStatusBadge');
+                badge.style.display = 'block';
+            }
+
+            function resetToAuto() {
+                isManualOverride = false;
+                document.getElementById('autoStatusBadge').style.display = 'none';
+
+                const flash = document.getElementById('autoFlash');
+                flash.style.opacity = '1';
+                setTimeout( () => flash.style.opacity = '0', 1500);
+
+                clearSelections();
+                highlightCurrentSlot();
+                setSystemMsg("Reverted to Auto-Schedule Tracking.", false);
             }
 
             function selectSubjectFromTimetable(slot, isAuto) {
+                let subjectTitle = slot.subject;
+                if (slot.batch && slot.batch !== "All") {
+                    subjectTitle += ` (${slot.batch})`;
+                }
+
                 selectedSubject = {
-                    name: slot.subject
+                    name: subjectTitle,
+                    batch: slot.batch || 'All'
                 };
-                setSystemMsg(isAuto ? `Auto-Selected: ${slot.subject}` : `Selected: ${slot.subject}`);
+
+                setSystemMsg(isAuto ? `Auto-Selected: ${subjectTitle}` : `Selected: ${subjectTitle}`);
+
+                if (humans.length > 0)
+                    refreshUI();
+
                 if (isRawViewOpen)
                     updateAndCopyRaw();
             }
@@ -1891,12 +2036,26 @@
                 displayHumans(e.target.value.toLowerCase());
             }
             );
+            function isHumanInCurrentBatch(index) {
+                if (!selectedSubject || !selectedSubject.batch || selectedSubject.batch === "All")
+                    return true;
+
+                if (selectedSubject.batch === "C1")
+                    return index < 32;
+                if (selectedSubject.batch === "C2")
+                    return index >= 32;
+
+                return true;
+            }
 
             function displayHumans(filterTerm='') {
                 const container = document.getElementById('humanList');
                 container.innerHTML = '';
                 const isTwoDigitSearch = /^\d{2}$/.test(filterTerm.trim());
                 humans.forEach( (human, index) => {
+                    if (!isHumanInCurrentBatch(index))
+                        return;
+
                     if (filterTerm) {
                         const name = human.name.toLowerCase();
                         const roll = String(human.rollNo).toLowerCase();
@@ -1952,32 +2111,50 @@
             ;
 
             function updateStats() {
-                let p = 0
+                let t = 0
+                  , p = 0
                   , a = 0;
-                Object.values(attendance).forEach(s => {
-                    if (s === true)
+                humans.forEach( (s, i) => {
+                    if (!isHumanInCurrentBatch(i))
+                        return;
+
+                    t++;
+                    if (attendance[i] === true)
                         p++;
-                    if (s === false)
+                    if (attendance[i] === false)
                         a++;
                 }
                 );
-                document.getElementById('totalCount').textContent = humans.length;
+
+                document.getElementById('totalCount').textContent = t;
                 document.getElementById('presentCount').textContent = p;
                 document.getElementById('absentCount').textContent = a;
             }
 
             document.getElementById('markAllPresent').onclick = () => {
-                humans.forEach( (_, i) => attendance[i] = true);
+                humans.forEach( (_, i) => {
+                    if (isHumanInCurrentBatch(i))
+                        attendance[i] = true;
+                }
+                );
                 refreshUI();
             }
             ;
             document.getElementById('markAllAbsent').onclick = () => {
-                humans.forEach( (_, i) => attendance[i] = false);
+                humans.forEach( (_, i) => {
+                    if (isHumanInCurrentBatch(i))
+                        attendance[i] = false;
+                }
+                );
                 refreshUI();
             }
             ;
             document.getElementById('clearAll').onclick = () => {
-                humans.forEach( (_, i) => attendance[i] = null);
+                humans.forEach( (_, i) => {
+                    if (isHumanInCurrentBatch(i))
+                        attendance[i] = null;
+                }
+                );
                 refreshUI();
             }
             ;
@@ -1993,8 +2170,11 @@
             function toggleOption(id) {
                 const el = document.getElementById(id);
                 el.classList.toggle('active');
+                const isActive = el.classList.contains('active');
                 const icon = el.querySelector('.icon');
-                icon.textContent = el.classList.contains('active') ? '●' : '○';
+                icon.textContent = isActive ? '●' : '○';
+                localStorage.setItem('attendex_' + id, isActive);
+
                 if (isRawViewOpen)
                     updateAndCopyRaw();
             }
@@ -2006,6 +2186,9 @@
                 const useStatus = document.getElementById('t-status').classList.contains('active');
                 let data = [];
                 humans.forEach( (h, i) => {
+                    if (!isHumanInCurrentBatch(i))
+                        return;
+
                     if (onlyPresent && attendance[i] !== true)
                         return;
                     let row = {};
@@ -2066,7 +2249,8 @@
             ;
 
             document.getElementById('shareWhatsApp').onclick = () => {
-                if (!validateExport()) return;
+                if (!validateExport())
+                    return;
                 const txt = generateRawText();
                 const encodedText = encodeURIComponent(txt);
                 const waUrl = `https://wa.me/?text=${encodedText}`;
@@ -2174,15 +2358,12 @@
                 }
             }
             typeWriterLoop();
-            if ('serviceWorker' in navigator) {
+            if ('serviceWorker'in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js')
-                        .then(reg => console.log('AttendEX App Engine Registered!'))
-                        .catch(err => console.log('App Engine failed to boot:', err));
-                });
+                    navigator.serviceWorker.register('./sw.js').then(reg => console.log('AttendEX App Engine Registered!')).catch(err => console.log('App Engine failed to boot:', err));
+                }
+                );
             }
         </script>
     </body>
 </html>
-
-
