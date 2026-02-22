@@ -696,10 +696,12 @@
                 user-select: none;
             }
 
-            .human-item:hover {
-                background: rgba(125,125,125,0.05);
-                transform: translateX(5px);
-                border-color: var(--system-accent-color);
+            @media (hover: hover) {
+                .human-item:hover {
+                    background: rgba(125,125,125,0.05);
+                    transform: translateX(5px);
+                    border-color: var(--system-accent-color);
+                }
             }
 
             .human-item:active {
@@ -987,10 +989,12 @@
                 align-items: center;
             }
 
-            .timeline-slot:hover {
-                background: rgba(125,125,125,0.05);
-                transform: translateX(5px);
-                border-color: var(--system-accent-color);
+            @media (hover: hover) {
+                .timeline-slot:hover {
+                    background: rgba(125,125,125,0.05);
+                    transform: translateX(5px);
+                    border-color: var(--system-accent-color);
+                }
             }
 
             .timeline-slot:active {
