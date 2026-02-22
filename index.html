@@ -1523,32 +1523,6 @@
                 }
                 );
             }
-            
-            async function checkForUpdates() {
-                try {
-                    if (!('caches' in window)) return;
-                    
-                    const cacheNames = await caches.keys();
-                    const currentCache = cacheNames.find(c => c.startsWith('attendex-cache-v'));
-                    const response = await fetch('./sw.js?t=' + new Date().getTime());
-                    if (!response.ok) return;
-                    const text = await response.text();
-
-                    const match = text.match(/const CACHE_NAME = ['"](attendex-cache-v\d+)['"]/);
-                    if (match && match[1]) {
-                        const latestCache = match[1];
-                        
-                        if (currentCache && currentCache !== latestCache) {
-                            isUpdateAvailable = true;
-                            document.getElementById('logout-btn').style.display = 'none';
-                            document.getElementById('update-btn').style.display = 'block';
-                            setSystemMsg("System Update Available! Click [ UPDATE APP ]", false);
-                        }
-                    }
-                } catch (e) {
-                    console.log("Auto-update check skipped.");
-                }
-            }
 
             async function initVersionDisplay() {
                 try {
@@ -1595,7 +1569,6 @@
                     minute: '2-digit'
                 };
                 dateEl.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
-                checkForUpdates();
                 initVersionDisplay();
             }
             );
@@ -2418,38 +2391,52 @@
             }
             typeWriterLoop();
             
-            async function forceAppUpdate() {
-                const btn = document.getElementById('update-btn');
-                if (btn) btn.textContent = '[ UPDATING... ]';
-                
-                try {
-                    if ('caches' in window) {
-                        const cacheNames = await caches.keys();
-                        await Promise.all(
-                            cacheNames
-                                .filter(name => name.startsWith('attendex-cache'))
-                                .map(name => caches.delete(name))
-                        );
-                    }
-                    if ('serviceWorker' in navigator) {
-                        const registrations = await navigator.serviceWorker.getRegistrations();
-                        for (let registration of registrations) {
-                            await registration.unregister();
-                        }
-                    }
-                    window.location.reload();
-                } catch (err) {
-                    console.error('Update failed:', err);
-                    setSystemMsg("Update failed. Try manual browser refresh.", true);
-                    if (btn) btn.textContent = '[ UPDATE FAILED ]';
-                }
+            function showUpdatePrompt() {
+                if (isUpdateAvailable) return;
+                isUpdateAvailable = true;
+                document.getElementById('logout-btn').style.display = 'none';
+                const updateBtn = document.getElementById('update-btn');
+                updateBtn.style.display = 'block';
+                updateBtn.textContent = '[ UPDATE APP ]';
+                setSystemMsg("System Update Available! Click [ UPDATE APP ]", false);
             }
 
-            if ('serviceWorker'in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js').then(reg => console.log('AttendEX App Engine Registered!')).catch(err => console.log('App Engine failed to boot:', err));
+            function forceAppUpdate() {
+                const btn = document.getElementById('update-btn');
+                if (btn) {
+                    btn.textContent = '[ UPDATING... ]';
                 }
-                );
+                window.location.replace(window.location.pathname + '?v=' + new Date().getTime());
+            }
+
+            let swRegistration = null;
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js').then(reg => {
+                        swRegistration = reg;
+                        console.log('AttendEX App Engine Registered!');
+
+                        document.addEventListener('visibilitychange', () => {
+                            if (document.visibilityState === 'visible') {
+                                reg.update().catch(() => {});
+                            }
+                        });
+
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        showUpdatePrompt();
+                                    }
+                                });
+                            }
+                        });
+                    }).catch(err => console.log('App Engine failed to boot:', err));
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        showUpdatePrompt();
+                    });
+                });
             }
         </script>
     </body>
