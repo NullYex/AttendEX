@@ -1219,6 +1219,7 @@
                     </div>
                 </div>
                 <div class="toolbar-actions">
+                    <button id="update-btn" class="theme-btn" onclick="forceAppUpdate()" style="color: var(--system-accent-color); border-color: var(--system-accent-color); display: none;">[ UPDATE APP ]</button>
                     <button id="logout-btn" class="theme-btn logout-btn" onclick="clearSavedKey()">[ FORGET DEVICE ]</button>
                     <button id="theme-toggle" class="theme-btn" onclick="toggleOverlay('theme-overlay', true)">[ CHANGE THEME ]</button>
                 </div>
@@ -1403,6 +1404,7 @@
             let isErrorState = false;
             let isManualOverride = false;
             let autoCheckInterval = null;
+            let isUpdateAvailable = false;
 
             const THEMES = [{
                 id: 'dark',
@@ -1520,6 +1522,32 @@
                 }
                 );
             }
+            
+            async function checkForUpdates() {
+                try {
+                    if (!('caches' in window)) return;
+                    
+                    const cacheNames = await caches.keys();
+                    const currentCache = cacheNames.find(c => c.startsWith('attendex-cache-v'));
+                    const response = await fetch('./sw.js?t=' + new Date().getTime());
+                    if (!response.ok) return;
+                    const text = await response.text();
+
+                    const match = text.match(/const CACHE_NAME = ['"](attendex-cache-v\d+)['"]/);
+                    if (match && match[1]) {
+                        const latestCache = match[1];
+                        
+                        if (currentCache && currentCache !== latestCache) {
+                            isUpdateAvailable = true;
+                            document.getElementById('logout-btn').style.display = 'none';
+                            document.getElementById('update-btn').style.display = 'block';
+                            setSystemMsg("System Update Available! Click [ UPDATE APP ]", false);
+                        }
+                    }
+                } catch (e) {
+                    console.log("Auto-update check skipped.");
+                }
+            }
 
             window.addEventListener('DOMContentLoaded', () => {
                 initToggles();
@@ -1542,6 +1570,7 @@
                     minute: '2-digit'
                 };
                 dateEl.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+                checkForUpdates();
             }
             );
 
@@ -1671,7 +1700,7 @@
                                     const data = JSON.parse(decryptedString);
                                     loadHumansData(data, "humans-xD.json (Auto-Unlocked)");
                                     setSystemMsg("Identity Verified via Saved Key.");
-                                    document.getElementById('logout-btn').style.display = 'block';
+                                    if (!isUpdateAvailable) document.getElementById('logout-btn').style.display = 'block';
                                     return;
                                 }
                             } catch (err) {
@@ -1703,7 +1732,7 @@
                             if (shouldSave) {
                                 maskAndSaveKey(passwordInput);
                                 alert("✅ Device Remembered! You won't be asked again.");
-                                document.getElementById('logout-btn').style.display = 'block';
+                                if (!isUpdateAvailable) document.getElementById('logout-btn').style.display = 'block';
                             }
 
                             loadHumansData(data, "humans-xD.json (Unlocked)");
@@ -2362,6 +2391,34 @@
                 }
             }
             typeWriterLoop();
+            
+            async function forceAppUpdate() {
+                const btn = document.getElementById('update-btn');
+                if (btn) btn.textContent = '[ UPDATING... ]';
+                
+                try {
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(
+                            cacheNames
+                                .filter(name => name.startsWith('attendex-cache'))
+                                .map(name => caches.delete(name))
+                        );
+                    }
+                    if ('serviceWorker' in navigator) {
+                        const registrations = await navigator.serviceWorker.getRegistrations();
+                        for (let registration of registrations) {
+                            await registration.unregister();
+                        }
+                    }
+                    window.location.reload();
+                } catch (err) {
+                    console.error('Update failed:', err);
+                    setSystemMsg("Update failed. Try manual browser refresh.", true);
+                    if (btn) btn.textContent = '[ UPDATE FAILED ]';
+                }
+            }
+
             if ('serviceWorker'in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js').then(reg => console.log('AttendEX App Engine Registered!')).catch(err => console.log('App Engine failed to boot:', err));
