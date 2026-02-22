@@ -2412,10 +2412,13 @@
             let swRegistration = null;
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js').then(reg => {
+                    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
                         swRegistration = reg;
                         console.log('AttendEX App Engine Registered!');
-
+                        if (reg.waiting) {
+                            showUpdatePrompt();
+                        }
+                        reg.update().catch(() => {});
                         document.addEventListener('visibilitychange', () => {
                             if (document.visibilityState === 'visible') {
                                 reg.update().catch(() => {});
