@@ -1518,12 +1518,8 @@
                             <span>INCLUDE: ROLL NO</span>
                             <span class="icon">●</span>
                         </div>
-                        <div class="toggle-chip" id="t-name" onclick="toggleOption('t-name')">
+                        <div class="toggle-chip active" id="t-name" onclick="toggleOption('t-name')">
                             <span>INCLUDE: NAME</span>
-                            <span class="icon">○</span>
-                        </div>
-                        <div class="toggle-chip active" id="t-status" onclick="toggleOption('t-status')">
-                            <span>INCLUDE: STATUS</span>
                             <span class="icon">●</span>
                         </div>
                     </div>
@@ -1864,7 +1860,7 @@
             }
 
             function initToggles() {
-                const toggleIds = ['t-present', 't-roll', 't-name', 't-status'];
+                const toggleIds = ['t-present', 't-roll', 't-name'];
                 toggleIds.forEach(id => {
                     const saved = localStorage.getItem('attendex_' + id);
                     const el = document.getElementById(id);
@@ -2579,7 +2575,6 @@
                 const onlyPresent = document.getElementById('t-present').classList.contains('active');
                 const useName = document.getElementById('t-name').classList.contains('active');
                 const useRoll = document.getElementById('t-roll').classList.contains('active');
-                const useStatus = document.getElementById('t-status').classList.contains('active');
                 let data = [];
                 humans.forEach( (h, i) => {
                     if (!isHumanInCurrentBatch(i))
@@ -2588,14 +2583,15 @@
                     if (onlyPresent && attendance[i] !== true)
                         return;
                     let row = {};
-                    if (useName)
-                        row['Name'] = h.name;
-                    if (useRoll)
-                        row['Roll No'] = h.rollNo;
                     if (true)
                         row['Enrollment'] = h.enrollmentNo;
-                    if (useStatus)
+                    if (useRoll)
+                        row['Roll No'] = String(h.rollNo).padStart(2, '0');
+                    if (!onlyPresent) {
                         row['Status'] = attendance[i] === true ? 'Present' : (attendance[i] === false ? 'Absent' : 'Unmarked');
+                    }
+                    if (useName)
+                        row['Name'] = h.name;
                     data.push(row);
                 }
                 );
@@ -2603,13 +2599,72 @@
             }
 
             function generateRawText() {
+                const onlyPresent = document.getElementById('t-present').classList.contains('active');
                 const data = getExportData();
                 const subject = selectedSubject ? (selectedSubject.name || selectedSubject) : "Unknown Subject";
-                let txt = `ATTENDANCE RPT - SUBJECT: ${subject}\nDATE: ${new Date().toLocaleString()}\n----------------------------\n`;
+                let txt = `ATTENDANCE RPT - SUBJECT: ${subject}\nDATE: ${new Date().toLocaleString()}\n`;
+                if (onlyPresent) {
+                    txt += `ONLY PRESENT STUDENT LIST:\n`;
+                } else {
+                    txt += `FULL STUDENT LIST:\n`;
+                }
+                txt += `----------------------------\n`;
                 data.forEach(row => {
-                    txt += Object.values(row).join(" | ") + "\n";
+                    let formattedValues = Object.values(row).map(val => {
+                        if (val === 'Present')
+                            return 'Present ';
+                        if (val === 'Absent')
+                            return 'Absent  ';
+                        return val;
+                    }
+                    );
+                    txt += formattedValues.join(" | ") + "\n";
                 }
                 );
+                return txt;
+            }
+
+            function generateWhatsAppText() {
+                const onlyPresent = document.getElementById('t-present').classList.contains('active');
+                const showStatus = !onlyPresent;
+                const data = getExportData();
+                const subject = selectedSubject ? (selectedSubject.name || selectedSubject) : "Unknown Subject";
+
+                let txt = `*Attendance Report...*\n\n`;
+                txt += `• *Branch:* *B. Tech Ai&DS (IBM) - II*\n`;
+                txt += `• *Subject:* *${subject}*\n`;
+                txt += `• *Date:* *${new Date().toLocaleString()}*\n\n`;
+
+                if (onlyPresent) {
+                    txt += `*_ONLY PRESENT STUDENT LIST:_*\n`;
+                } else {
+                    txt += `*_FULL STUDENT LIST:_*\n`;
+                }
+
+                txt += "```\n";
+                if (!showStatus) {
+                    txt += "Enroll No. |Roll| Name\n";
+                    txt += "-----------|----|--------------------\n";
+                } else {
+                    txt += "Enroll No. |Roll|  Status  | Name\n";
+                    txt += "-----------|----|----------|--------------------\n";
+                }
+
+                data.forEach(row => {
+                    let formattedValues = Object.values(row).map(val => {
+                        if (val === 'Present')
+                            return 'Present ';
+                        if (val === 'Absent')
+                            return 'Absent  ';
+                        return val;
+                    }
+                    );
+
+                    txt += formattedValues.join(" | ") + "\n";
+                }
+                );
+                txt += "```\n";
+                txt += "```\nBy NullYex: http://nullyex.com/AttendEX/\n```";
                 return txt;
             }
 
@@ -2644,10 +2699,16 @@
             }
             ;
 
-            document.getElementById('shareWhatsApp').onclick = () => {
+            document.getElementById('shareWhatsApp').onclick = async () => {
                 if (!validateExport())
                     return;
-                const txt = generateRawText();
+                const txt = generateWhatsAppText();
+                try {
+                    await navigator.clipboard.writeText(txt);
+                    showFlash();
+                } catch (e) {
+                    console.error("Clipboard copy failed");
+                }
                 const encodedText = encodeURIComponent(txt);
                 const waUrl = `https://wa.me/?text=${encodedText}`;
                 window.open(waUrl, '_blank');
