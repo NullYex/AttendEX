@@ -1384,6 +1384,16 @@
                 <button class="sys-btn" onclick="toggleOverlay('theme-overlay', false)" style="width: 100%; margin-top: 25px;">CLOSE</button>
             </div>
         </div>
+        <div id="reset-confirm-overlay" class="overlay">
+            <div class="modal-card">
+                <h2 class="brand" style="color: var(--accent-red); margin-bottom: 10px;">WARNING</h2>
+                <div style="font-size: 0.9rem; color: var(--text-color); margin-bottom: 30px;">Are you sure you want to reset all attendance records?</div>
+                <div class="btn-grid">
+                    <button class="sys-btn" onclick="toggleOverlay('reset-confirm-overlay', false)">CANCEL</button>
+                    <button class="sys-btn" style="border-color: var(--accent-red); color: var(--accent-red);" onclick="executeResetAll()" onmouseover="this.style.background='var(--accent-red)'; this.style.color='#000'" onmouseout="this.style.background='transparent'; this.style.color='var(--accent-red)'">CONFIRM RESET</button>
+                </div>
+            </div>
+        </div>
         <div id="access-denied-screen">
             <div class="lockdown-brand">AttendEX.</div>
             <div class="lockdown-subtitle">CREATED BY TEAM NULLYEX</div>
@@ -2530,12 +2540,18 @@
             }
             ;
             document.getElementById('clearAll').onclick = () => {
+                toggleOverlay('reset-confirm-overlay', true);
+            }
+            ;
+
+            window.executeResetAll = function() {
                 humans.forEach( (_, i) => {
                     if (isHumanInCurrentBatch(i))
                         attendance[i] = null;
                 }
                 );
                 refreshUI();
+                toggleOverlay('reset-confirm-overlay', false);
             }
             ;
 
