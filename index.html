@@ -1517,7 +1517,7 @@
                             <span class="icon">●</span>
                         </div>
                     </div>
-                   <div class="btn-grid">
+                    <div class="btn-grid">
                         <button id="downloadExcel" class="sys-btn primary">EXPORT .XLSX</button>
                         <button id="downloadTxt" class="sys-btn">EXPORT .TXT</button>
                         <button id="viewText" class="sys-btn">VIEW RAW</button>
@@ -2432,7 +2432,9 @@
             function displayHumans(filterTerm='') {
                 const container = document.getElementById('humanList');
                 container.innerHTML = '';
-                const isTwoDigitSearch = /^\d{2}$/.test(filterTerm.trim());
+                const isRollSearch = /^\d{1,2}$/.test(filterTerm.trim());
+                const fragment = document.createDocumentFragment();
+
                 humans.forEach( (human, index) => {
                     if (!isHumanInCurrentBatch(index))
                         return;
@@ -2442,7 +2444,7 @@
                         const roll = String(human.rollNo).toLowerCase();
                         const enroll = String(human.enrollmentNo).toLowerCase();
 
-                        if (isTwoDigitSearch) {
+                        if (isRollSearch) {
                             if (!roll.includes(filterTerm))
                                 return;
                         } else {
@@ -2471,9 +2473,10 @@
                     </div>
                     <div class="status-badge">${statusText}</div>
                 `;
-                    container.appendChild(item);
+                    fragment.appendChild(item);
                 }
                 );
+                container.appendChild(fragment);
             }
 
             window.cycleStatus = function(index) {
@@ -2483,11 +2486,7 @@
                     attendance[index] = false;
                 else
                     attendance[index] = null;
-                const currentSearch = document.getElementById('searchHuman').value.toLowerCase();
-                displayHumans(currentSearch);
-                updateStats();
-                if (isRawViewOpen)
-                    updateAndCopyRaw();
+                refreshUI();
             }
             ;
 
@@ -2686,12 +2685,14 @@
             );
 
             function animateCursor() {
-                cursorX += (mouseX - cursorX) * speed;
-                cursorY += (mouseY - cursorY) * speed;
-                const dist = Math.sqrt(Math.pow(mouseX - cursorX, 2) + Math.pow(mouseY - cursorY, 2));
-                const scale = Math.min(dist / 15, 0.5);
-                const angle = Math.atan2(mouseY - cursorY, mouseX - cursorX) * 180 / Math.PI;
-                cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scale(${1 + scale}, ${1 - scale * 0.5})`;
+                if (Math.abs(mouseX - cursorX) > 0.1 || Math.abs(mouseY - cursorY) > 0.1) {
+                    cursorX += (mouseX - cursorX) * speed;
+                    cursorY += (mouseY - cursorY) * speed;
+                    const dist = Math.sqrt(Math.pow(mouseX - cursorX, 2) + Math.pow(mouseY - cursorY, 2));
+                    const scale = Math.min(dist / 15, 0.5);
+                    const angle = Math.atan2(mouseY - cursorY, mouseX - cursorX) * 180 / Math.PI;
+                    cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scale(${1 + scale}, ${1 - scale * 0.5})`;
+                }
                 requestAnimationFrame(animateCursor);
             }
             animateCursor();
@@ -2804,4 +2805,3 @@
         </script>
     </body>
 </html>
-
