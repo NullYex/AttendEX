@@ -1,4 +1,4 @@
-const CACHE_NAME = 'attendex-cache-v12';
+const CACHE_NAME = 'attendex-cache-v13';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,6 +7,8 @@ const urlsToCache = [
   './subjects-why-not.json',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js',
+  'https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css',
+  'https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js',
   'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap',
   'https://avatars.githubusercontent.com/u/230855043?v=4'
 ];
