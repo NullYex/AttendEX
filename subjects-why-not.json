@@ -11,7 +11,7 @@
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Engineering Mathematics–II",
+      "subject": "Engineering Mathematics-II",
       "faculty": "Prof. Deepa Mandal",
       "type": "Theory",
       "batch": "All"
@@ -45,7 +45,7 @@
     {
       "startTime": "10:25",
       "endTime": "11:20",
-      "subject": "Engineering Mathematics–II",
+      "subject": "Engineering Mathematics-II",
       "faculty": "Prof. Deepa Mandal",
       "type": "Theory",
       "batch": "All"
@@ -110,41 +110,33 @@
     },
     {
       "startTime": "12:30",
-      "endTime": "13:25",
-      "subject": "English Language & Comm Skills Lab",
+      "endTime": "14:25",
+      "subject": "English Language and Communication Skills Laboratory",
       "faculty": "Dr. Monika Singh",
       "type": "Lab",
       "batch": "C1"
     },
     {
       "startTime": "12:30",
-      "endTime": "13:25",
+      "endTime": "14:25",
       "subject": "Engineering Workshop",
       "faculty": "Mr. Jai Narayan",
       "type": "Lab",
       "batch": "C2"
     },
     {
-      "startTime": "13:30",
-      "endTime": "14:25",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
       "startTime": "14:50",
       "endTime": "15:45",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
+      "subject": "English for Skill Enhancement",
+      "faculty": "Dr. Monika Singh",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Manufacturing Practice",
-      "faculty": "Dr. Shailendra Kr Prashad",
+      "subject": "Engineering Chemistry",
+      "faculty": "Dr. ChandraPrabha Sahu",
       "type": "Theory",
       "batch": "All"
     }
@@ -169,23 +161,23 @@
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "13:30",
-      "endTime": "14:25",
       "subject": "English for Skill Enhancement",
       "faculty": "Dr. Monika Singh",
       "type": "Theory",
       "batch": "All"
     },
     {
+      "startTime": "13:30",
+      "endTime": "14:25",
+      "subject": "Engineering Chemistry",
+      "faculty": "Dr. ChandraPrabha Sahu",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
       "startTime": "14:50",
       "endTime": "15:45",
-      "subject": "Engineering Mathematics–II",
+      "subject": "Engineering Mathematics-II",
       "faculty": "Prof. Deepa Mandal",
       "type": "Theory",
       "batch": "All"
@@ -193,8 +185,8 @@
     {
       "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Universal Human Values",
-      "faculty": "Dr. Binod Kumar Choudhary",
+      "subject": "Manufacturing Practice",
+      "faculty": "Dr. Shailendra Kr Prashad",
       "type": "Theory",
       "batch": "All"
     }
@@ -202,51 +194,51 @@
   "Friday": [
     {
       "startTime": "10:25",
-      "endTime": "11:20",
-      "subject": "English for Skill Enhancement",
-      "faculty": "Dr. Monika Singh",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "12:30",
-      "endTime": "13:25",
-      "subject": "Constitution Of India",
-      "faculty": "Dr. Prem Nath Suman",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "13:30",
-      "endTime": "14:25",
-      "subject": "Engineering Mathematics–II",
-      "faculty": "Prof. Deepa Mandal",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "14:50",
-      "endTime": "16:45",
       "subject": "Design Thinking and Idea Laboratory",
       "faculty": "Mr. Santosh Kumar Sah",
       "type": "Lab",
       "batch": "C1"
     },
     {
-      "startTime": "14:50",
-      "endTime": "16:45",
-      "subject": "English Language & Comm Skills Lab",
+      "startTime": "10:25",
+      "endTime": "12:20",
+      "subject": "English Language and Communication Skills Laboratory",
       "faculty": "Dr. Monika Singh",
       "type": "Lab",
       "batch": "C2"
+    },
+    {
+      "startTime": "12:30",
+      "endTime": "13:25",
+      "subject": "Engineering Chemistry",
+      "faculty": "Dr. ChandraPrabha Sahu",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "13:30",
+      "endTime": "14:25",
+      "subject": "Constitution Of India",
+      "faculty": "Dr. Prem Nath Suman",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "14:50",
+      "endTime": "15:45",
+      "subject": "Universal Human Values",
+      "faculty": "Dr. Binod Kumar Choudhary",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "15:50",
+      "endTime": "16:45",
+      "subject": "Engineering Mathematics-II",
+      "faculty": "Prof. Deepa Mandal",
+      "type": "Theory",
+      "batch": "All"
     }
   ],
   "Saturday": [
@@ -277,7 +269,7 @@
     {
       "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "Engineering Mathematics–II",
+      "subject": "Engineering Mathematics-II",
       "faculty": "Prof. Deepa Mandal",
       "type": "Theory",
       "batch": "All"
@@ -285,16 +277,16 @@
     {
       "startTime": "14:50",
       "endTime": "15:45",
-      "subject": "Constitution Of India",
-      "faculty": "Dr. Prem Nath Suman",
+      "subject": "English for Skill Enhancement",
+      "faculty": "Dr. Monika Singh",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "English for Skill Enhancement",
-      "faculty": "Dr. Monika Singh",
+      "subject": "Engineering Mathematics-II",
+      "faculty": "Prof. Deepa Mandal",
       "type": "Theory",
       "batch": "All"
     }
