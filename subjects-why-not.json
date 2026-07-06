@@ -2,42 +2,42 @@
   "Monday": [
     {
       "startTime": "10:25",
+      "endTime": "11:20",
+      "subject": "Digital Electronics",
+      "faculty": "Dr. Nidhi Dua",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Programming with Python Laboratory",
-      "faculty": "IBM Subject Expert",
-      "type": "Lab",
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
+      "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Engineering Mathematics-II",
-      "faculty": "Prof. Deepa Mandal",
+      "subject": "Programming with Java",
+      "faculty": "Prof. Syed Rashid Anwar",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
+      "subject": "Data Structures",
+      "faculty": "Prof. Sayantani De",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "14:50",
-      "endTime": "15:45",
-      "subject": "Manufacturing Practice",
-      "faculty": "Dr. Shailendra Kr Prashad",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Programming with Python",
-      "faculty": "IBM Subject Expert",
-      "type": "Theory",
+      "subject": "Programming with Java Laboratory",
+      "faculty": "Prof. Syed Rashid Anwar",
+      "type": "Lab",
       "batch": "All"
     }
   ],
@@ -45,98 +45,90 @@
     {
       "startTime": "10:25",
       "endTime": "11:20",
-      "subject": "Engineering Mathematics-II",
-      "faculty": "Prof. Deepa Mandal",
+      "subject": "Cloud Fundamentals",
+      "faculty": "IBM Faculty",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Programming with Python",
-      "faculty": "IBM Subject Expert",
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "English for Skill Enhancement",
-      "faculty": "Dr. Monika Singh",
+      "subject": "Computer Organization and Architecture",
+      "faculty": "Avinash Jena Samantha",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
+      "subject": "Programming with Java",
+      "faculty": "Prof. Syed Rashid Anwar",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "14:50",
       "endTime": "16:45",
-      "subject": "Engineering Chemistry Laboratory",
-      "faculty": "Mr. Abhijit Mandal",
+      "subject": "Digital Electronics Laboratory",
+      "faculty": "Dr. Nidhi Dua",
       "type": "Lab",
-      "batch": "C2"
-    },
-    {
-      "startTime": "14:50",
-      "endTime": "16:45",
-      "subject": "Engineering Workshop",
-      "faculty": "Mr. Jai Narayan",
-      "type": "Lab",
-      "batch": "C1"
+      "batch": "All"
     }
   ],
   "Wednesday": [
     {
       "startTime": "10:25",
       "endTime": "11:20",
-      "subject": "Programming with Python",
-      "faculty": "IBM Subject Expert",
+      "subject": "Data Structures",
+      "faculty": "Prof. Sayantani De",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Universal Human Values",
-      "faculty": "Dr. Binod Kumar Choudhary",
+      "subject": "Cloud Fundamentals",
+      "faculty": "IBM Faculty",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "12:30",
-      "endTime": "14:25",
-      "subject": "English Language and Communication Skills Laboratory",
-      "faculty": "Dr. Monika Singh",
-      "type": "Lab",
-      "batch": "C1"
+      "endTime": "13:25",
+      "subject": "Digital Electronics",
+      "faculty": "Dr. Nidhi Dua",
+      "type": "Theory",
+      "batch": "All"
     },
     {
-      "startTime": "12:30",
+      "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "Engineering Workshop",
-      "faculty": "Mr. Jai Narayan",
-      "type": "Lab",
-      "batch": "C2"
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
+      "type": "Theory",
+      "batch": "All"
     },
     {
       "startTime": "14:50",
       "endTime": "15:45",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
+      "subject": "Computer Organization and Architecture",
+      "faculty": "Avinash Jena Samantha",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Manufacturing Practice",
-      "faculty": "Dr. Shailendra Kr Prashad",
+      "subject": "Gender Sensitization",
+      "faculty": "Dr. Monika Singh",
       "type": "Theory",
       "batch": "All"
     }
@@ -145,48 +137,40 @@
     {
       "startTime": "10:25",
       "endTime": "12:20",
-      "subject": "Engineering Chemistry Laboratory",
-      "faculty": "Mr. Abhijit Mandal",
+      "subject": "Data Structures Laboratory",
+      "faculty": "Prof. Sayantani De",
       "type": "Lab",
-      "batch": "C1"
-    },
-    {
-      "startTime": "10:25",
-      "endTime": "12:20",
-      "subject": "Design Thinking and Idea Laboratory",
-      "faculty": "Mr. Santosh Kumar Sah",
-      "type": "Lab",
-      "batch": "C2"
+      "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
+      "subject": "Digital Electronics",
+      "faculty": "Dr. Nidhi Dua",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "English for Skill Enhancement",
-      "faculty": "Dr. Monika Singh",
+      "subject": "Data Structures",
+      "faculty": "Prof. Sayantani De",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "14:50",
       "endTime": "15:45",
-      "subject": "Engineering Mathematics-II",
-      "faculty": "Prof. Deepa Mandal",
+      "subject": "Computer Organization and Architecture",
+      "faculty": "Avinash Jena Samantha",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Universal Human Values",
-      "faculty": "Dr. Binod Kumar Choudhary",
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
       "type": "Theory",
       "batch": "All"
     }
@@ -194,100 +178,76 @@
   "Friday": [
     {
       "startTime": "10:25",
-      "endTime": "11:20",
-      "subject": "English for Skill Enhancement",
-      "faculty": "Dr. Monika Singh",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Engineering Chemistry",
-      "faculty": "Dr. ChandraPrabha Sahu",
-      "type": "Theory",
+      "subject": "Programming with Java Laboratory",
+      "faculty": "Prof. Syed Rashid Anwar",
+      "type": "Lab",
       "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Constitution Of India",
-      "faculty": "Dr. Prem Nath Suman",
+      "subject": "Cloud Fundamentals",
+      "faculty": "IBM Faculty",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "Engineering Mathematics-II",
-      "faculty": "Prof. Deepa Mandal",
+      "subject": "Data Structures",
+      "faculty": "Prof. Sayantani De",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "14:50",
-      "endTime": "15:45",
-      "subject": "Programming with Python",
-      "faculty": "IBM Subject Expert",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Library",
-      "faculty": "N/A",
-      "type": "Library",
+      "subject": "Data Structures Laboratory",
+      "faculty": "Prof. Sayantani De",
+      "type": "Lab",
       "batch": "All"
     }
   ],
   "Saturday": [
     {
       "startTime": "10:25",
-      "endTime": "12:20",
-      "subject": "Design Thinking and Idea Laboratory",
-      "faculty": "Mr. Santosh Kumar Sah",
-      "type": "Lab",
-      "batch": "C1"
+      "endTime": "11:20",
+      "subject": "Programming with Java",
+      "faculty": "Prof. Syed Rashid Anwar",
+      "type": "Theory",
+      "batch": "All"
     },
     {
-      "startTime": "10:25",
+      "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "English Language and Communication Skills Laboratory",
-      "faculty": "Dr. Monika Singh",
-      "type": "Lab",
-      "batch": "C2"
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
+      "type": "Theory",
+      "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Programming with Python",
-      "faculty": "IBM Subject Expert",
+      "subject": "Cloud Fundamentals",
+      "faculty": "IBM Faculty",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "13:30",
       "endTime": "14:25",
-      "subject": "Engineering Mathematics-II",
-      "faculty": "Prof. Deepa Mandal",
+      "subject": "Computer Organization and Architecture",
+      "faculty": "Avinash Jena Samantha",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "14:50",
-      "endTime": "15:45",
-      "subject": "English for Skill Enhancement",
-      "faculty": "Dr. Monika Singh",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Engineering Mathematics-II",
-      "faculty": "Prof. Deepa Mandal",
-      "type": "Theory",
+      "subject": "Digital Electronics Laboratory",
+      "faculty": "Dr. Nidhi Dua",
+      "type": "Lab",
       "batch": "All"
     }
   ]
