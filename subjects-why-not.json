@@ -36,9 +36,17 @@
       "startTime": "14:50",
       "endTime": "16:45",
       "subject": "Programming with Java Laboratory",
-      "faculty": "Prof. Syed Rashid Anwar",
+      "faculty": "Prof. Syed Rashid Anwar, Dileep Kumar",
       "type": "Lab",
-      "batch": "All"
+      "batch": "C1"
+    },
+    {
+      "startTime": "14:50",
+      "endTime": "16:45",
+      "subject": "Digital Electronics Laboratory",
+      "faculty": "Dr. Nidhi Dua, Bilquees Bano",
+      "type": "Lab",
+      "batch": "C2"
     }
   ],
   "Tuesday": [
@@ -76,10 +84,18 @@
     },
     {
       "startTime": "14:50",
+      "endTime": "15:45",
+      "subject": "Cloud Fundamentals",
+      "faculty": "IBM Faculty",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Digital Electronics Laboratory",
-      "faculty": "Dr. Nidhi Dua",
-      "type": "Lab",
+      "subject": "Programming with Java",
+      "faculty": "Prof. Syed Rashid Anwar",
+      "type": "Theory",
       "batch": "All"
     }
   ],
@@ -95,16 +111,16 @@
     {
       "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Cloud Fundamentals",
-      "faculty": "IBM Faculty",
+      "subject": "Digital Electronics",
+      "faculty": "Dr. Nidhi Dua",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Digital Electronics",
-      "faculty": "Dr. Nidhi Dua",
+      "subject": "Computer Organization and Architecture",
+      "faculty": "Avinash Jena Samantha",
       "type": "Theory",
       "batch": "All"
     },
@@ -136,10 +152,18 @@
   "Thursday": [
     {
       "startTime": "10:25",
+      "endTime": "11:20",
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Data Structures Laboratory",
-      "faculty": "Prof. Sayantani De",
-      "type": "Lab",
+      "subject": "Gender Sensitization",
+      "faculty": "Dr. Monika Singh",
+      "type": "Theory",
       "batch": "All"
     },
     {
@@ -160,18 +184,10 @@
     },
     {
       "startTime": "14:50",
-      "endTime": "15:45",
-      "subject": "Computer Organization and Architecture",
-      "faculty": "Avinash Jena Samantha",
-      "type": "Theory",
-      "batch": "All"
-    },
-    {
-      "startTime": "15:50",
       "endTime": "16:45",
-      "subject": "Engineering Mathematics-III",
-      "faculty": "Prof. Mukesh Kumar Sinha",
-      "type": "Theory",
+      "subject": "Data Structures Laboratory",
+      "faculty": "Prof. Sayantani De, Neelam Kumari",
+      "type": "Lab",
       "batch": "All"
     }
   ],
@@ -180,9 +196,17 @@
       "startTime": "10:25",
       "endTime": "12:20",
       "subject": "Programming with Java Laboratory",
-      "faculty": "Prof. Syed Rashid Anwar",
+      "faculty": "Prof. Syed Rashid Anwar, Dileep Kumar",
       "type": "Lab",
-      "batch": "All"
+      "batch": "C2"
+    },
+    {
+      "startTime": "10:25",
+      "endTime": "12:20",
+      "subject": "Digital Electronics Laboratory",
+      "faculty": "Dr. Nidhi Dua, Bilquees Bano",
+      "type": "Lab",
+      "batch": "C1"
     },
     {
       "startTime": "12:30",
@@ -204,7 +228,7 @@
       "startTime": "14:50",
       "endTime": "16:45",
       "subject": "Data Structures Laboratory",
-      "faculty": "Prof. Sayantani De",
+      "faculty": "Prof. Sayantani De, Neelam Kumari",
       "type": "Lab",
       "batch": "All"
     }
@@ -221,16 +245,16 @@
     {
       "startTime": "11:25",
       "endTime": "12:20",
-      "subject": "Engineering Mathematics-III",
-      "faculty": "Prof. Mukesh Kumar Sinha",
+      "subject": "Cloud Fundamentals",
+      "faculty": "IBM Faculty",
       "type": "Theory",
       "batch": "All"
     },
     {
       "startTime": "12:30",
       "endTime": "13:25",
-      "subject": "Cloud Fundamentals",
-      "faculty": "IBM Faculty",
+      "subject": "Engineering Mathematics-III",
+      "faculty": "Prof. Mukesh Kumar Sinha",
       "type": "Theory",
       "batch": "All"
     },
@@ -244,10 +268,18 @@
     },
     {
       "startTime": "14:50",
-      "endTime": "16:45",
-      "subject": "Digital Electronics Laboratory",
+      "endTime": "15:45",
+      "subject": "Digital Electronics",
       "faculty": "Dr. Nidhi Dua",
-      "type": "Lab",
+      "type": "Theory",
+      "batch": "All"
+    },
+    {
+      "startTime": "15:50",
+      "endTime": "16:45",
+      "subject": "Library",
+      "faculty": "N/A",
+      "type": "Library",
       "batch": "All"
     }
   ]
