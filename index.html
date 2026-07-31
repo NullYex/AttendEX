@@ -1439,6 +1439,8 @@
                     <label for="cursorToggle">ENABLE PHYSICS CURSOR</label>
                 </div>
                 <button class="sys-btn" onclick="toggleOverlay('theme-overlay', false)" style="width: 100%; margin-top: 25px;">CLOSE</button>
+                <button id="forceUpdateBtn" class="pebble-btn" onclick="forceHardUpdate()" style="width: 100%; margin-top: 12px; padding: 8px; opacity: 0.7;">[ FORCE UPDATE / CLEAR CACHE ]</button>
+                <div style="font-size: 0.6rem; color: var(--text-dim); text-align: center; margin-top: 6px; letter-spacing: 0.5px;">Not seeing the latest version? Tap above to hard-reset the app.</div>
             </div>
         </div>
         <div id="reset-confirm-overlay" class="overlay">
@@ -3007,25 +3009,74 @@
                 setSystemMsg("System Update Available! Click [ UPDATE APP ]", false);
             }
 
+            async function nukeCachesAndServiceWorkers() {
+                try {
+                    if ('serviceWorker' in navigator) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(r => r.unregister().catch( () => {}
+                        )));
+                    }
+                } catch (e) {
+                    console.log('SW unregister failed:', e);
+                }
+                try {
+                    if ('caches' in window) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(k => caches.delete(k).catch( () => {}
+                        )));
+                    }
+                } catch (e) {
+                    console.log('Cache purge failed:', e);
+                }
+            }
+
             function forceAppUpdate() {
                 const btn = document.getElementById('update-btn');
                 if (btn) {
+                    btn.disabled = true;
                     btn.textContent = '[ UPDATING... ]';
                 }
-                window.location.replace(window.location.pathname + '?v=' + new Date().getTime());
+                nukeCachesAndServiceWorkers().finally( () => {
+                    window.location.replace(window.location.pathname + '?v=' + new Date().getTime());
+                }
+                );
+            }
+
+            function forceHardUpdate() {
+                const btn = document.getElementById('forceUpdateBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = '[ CLEARING CACHE... ]';
+                }
+                nukeCachesAndServiceWorkers().finally( () => {
+                    window.location.replace(window.location.pathname + '?v=' + new Date().getTime());
+                }
+                );
             }
 
             let swRegistration = null;
             if ('serviceWorker'in navigator) {
+                const hadControllerOnLoad = !!navigator.serviceWorker.controller;
+
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (hadControllerOnLoad)
+                        showUpdatePrompt();
+                }
+                );
+
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js', {
                         updateViaCache: 'none'
                     }).then(reg => {
                         swRegistration = reg;
                         console.log('AttendEX App Engine Registered!');
-                        if (reg.waiting) {
-                            showUpdatePrompt();
+
+                        const flagWaitingWorker = () => {
+                            if (reg.waiting && hadControllerOnLoad)
+                                showUpdatePrompt();
                         }
+                        ;
+                        flagWaitingWorker();
                         reg.update().catch( () => {}
                         );
                         document.addEventListener('visibilitychange', () => {
@@ -3035,13 +3086,18 @@
                             }
                         }
                         );
+                        setInterval( () => {
+                            reg.update().catch( () => {}
+                            );
+                        }
+                        , 60000);
 
                         reg.addEventListener('updatefound', () => {
                             const newWorker = reg.installing;
                             if (newWorker) {
                                 newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        showUpdatePrompt();
+                                    if (newWorker.state === 'installed') {
+                                        flagWaitingWorker();
                                     }
                                 }
                                 );
@@ -3050,10 +3106,6 @@
                         );
                     }
                     ).catch(err => console.log('App Engine failed to boot:', err));
-                    navigator.serviceWorker.addEventListener('controllerchange', () => {
-                        showUpdatePrompt();
-                    }
-                    );
                 }
                 );
             }
