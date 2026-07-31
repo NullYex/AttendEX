@@ -1,4 +1,4 @@
-const CACHE_NAME = 'attendex-cache-v25';
+const CACHE_NAME = 'attendex-cache-v26';
 const urlsToCache = [
   './',
   './index.html',
