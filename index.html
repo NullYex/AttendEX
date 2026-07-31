@@ -1199,11 +1199,17 @@
                 transform: scale(0.98);
             }
 
-            .timeline-slot.active-now::after {
-                content: 'ACTIVE NOW';
+            .slot-badge-row {
                 position: absolute;
                 top: 10px;
                 right: 10px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                pointer-events: none;
+            }
+
+            .active-now-pill {
                 font-size: 0.6rem;
                 font-weight: 900;
                 color: var(--system-accent-color);
@@ -1212,12 +1218,48 @@
                 border-radius: 4px;
                 border: 1px solid var(--system-accent-color);
                 opacity: 0.9;
+                white-space: nowrap;
+            }
+
+            .slot-timer-pill {
+                font-size: 0.85rem;
+                font-weight: 900;
+                color: var(--text-color);
+                background: var(--bg-color);
+                padding: 3px 8px;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+                opacity: 0.95;
+                white-space: nowrap;
+                font-variant-numeric: tabular-nums;
             }
 
             .timeline-slot.selected {
                 border-color: var(--system-accent-color) !important;
                 background: var(--dim-color) !important;
                 box-shadow: inset 0 0 0 1px var(--system-accent-color), 0 0 15px var(--dim-color) !important;
+            }
+
+            .schedule-timer-pill {
+                display: none;
+                align-items: baseline;
+                gap: 8px;
+                white-space: nowrap;
+            }
+
+            .schedule-timer-label {
+                font-size: 0.6rem;
+                font-weight: bold;
+                color: var(--text-dim);
+                letter-spacing: 1px;
+            }
+
+            .schedule-timer-value {
+                font-size: 1.1rem;
+                font-weight: 900;
+                color: var(--system-accent-color);
+                font-variant-numeric: tabular-nums;
+                letter-spacing: 1px;
             }
 
             .pebble-btn {
@@ -1307,6 +1349,10 @@
             }
 
             @media (max-width: 600px) {
+                .schedule-timer-value {
+                    font-size: 0.95rem;
+                }
+
                 .toolbar-actions {
                     width: 100%;
                     justify-content: space-between;
@@ -1326,10 +1372,21 @@
                     min-height: auto;
                 }
 
-                .timeline-slot.active-now::after {
+                .slot-badge-row {
                     top: auto;
                     bottom: 10px;
+                }
+
+                .active-now-pill {
                     font-size: 0.5rem;
+                }
+
+                .slot-timer-pill {
+                    font-size: 0.7rem;
+                }
+
+                .schedule-timer-pill {
+                    font-size: 0.9rem !important;
                 }
 
                 .slot-time {
@@ -1462,6 +1519,10 @@
                 <div class="card-header-row">
                     <div class="card-title">SMART SCHEDULE</div>
                     <div style="position: relative; height: 28px; display: flex; align-items: center;">
+                        <div id="scheduleTimerPill" class="schedule-timer-pill" style="position: absolute; right: 0;">
+                            <span id="scheduleTimerLabel" class="schedule-timer-label">ENDS IN</span>
+                            <span id="scheduleTimerValue" class="schedule-timer-value">00:00</span>
+                        </div>
                         <div id="autoFlash" style="font-size: 0.7rem; font-weight: bold; color: #000; background: var(--system-accent-color); padding: 4px 8px; border-radius: 4px; opacity: 0; transition: opacity 0.3s; pointer-events: none; position: absolute; right: 0; white-space: nowrap;">AUTO MODE ENABLED</div>
                         <button id="autoStatusBadge" class="pebble-btn" style="display:none; position: absolute; right: 0; white-space: nowrap;" onclick="resetToAuto()">MANUAL MODE</button>
                     </div>
@@ -1621,6 +1682,7 @@
             let isErrorState = false;
             let isManualOverride = false;
             let autoCheckInterval = null;
+            let countdownInterval = null;
             let isUpdateAvailable = false;
 
             const THEMES = [{
@@ -2111,6 +2173,7 @@
                     document.getElementById('smartScheduleCard').classList.remove('hidden');
                     initTimetableUI();
                     startAutoScheduler();
+                    startCountdownTimer();
 
                 } catch (error) {
                     console.log("Subjects JSON load failed, using fallback or manual upload");
@@ -2171,6 +2234,7 @@
                     ;
 
                     el.innerHTML = `
+                        <div class="slot-badge-row" id="badgerow-${dayName}-${index}"></div>
                         <div class="slot-time">
                             <span class="t-start">${slot.startTime}</span>
                             <span class="t-end">${slot.endTime}</span>
@@ -2194,6 +2258,104 @@
                 if (autoCheckInterval)
                     clearInterval(autoCheckInterval);
                 autoCheckInterval = setInterval(highlightCurrentSlot, 30000);
+            }
+
+            function startCountdownTimer() {
+                if (countdownInterval)
+                    clearInterval(countdownInterval);
+                updateCountdowns();
+                countdownInterval = setInterval(updateCountdowns, 1000);
+            }
+
+            function formatCountdown(totalSeconds) {
+                if (totalSeconds < 0)
+                    totalSeconds = 0;
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = Math.floor(totalSeconds % 60);
+                const pad = n => String(n).padStart(2, '0');
+                return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+            }
+
+            function computeScheduleTimerState() {
+                if (!timetableData)
+                    return null;
+
+                const now = new Date();
+                const dayMap = [null, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const todayName = dayMap[now.getDay()];
+
+                if (!todayName || !timetableData[todayName] || timetableData[todayName].length === 0)
+                    return null;
+
+                const slots = timetableData[todayName];
+                const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                const getSec = t => {
+                    const [h,m] = t.split(':').map(Number);
+                    return h * 3600 + m * 60;
+                };
+
+                for (let i = 0; i < slots.length; i++) {
+                    const trueStart = getSec(slots[i].startTime);
+                    const end = getSec(slots[i].endTime);
+                    if (nowSec >= (trueStart - 600) && nowSec < end) {
+                        if (nowSec < trueStart) {
+                            return { todayName, index: i, mode: 'starting', label: 'STARTS IN', seconds: trueStart - nowSec };
+                        }
+                        return { todayName, index: i, mode: 'ongoing', label: 'ENDS IN', seconds: end - nowSec };
+                    }
+                }
+
+                let nextIndex = -1;
+                let nextStart = Infinity;
+                slots.forEach( (slot, idx) => {
+                    const start = getSec(slot.startTime);
+                    if (start > nowSec && start < nextStart) {
+                        nextStart = start;
+                        nextIndex = idx;
+                    }
+                }
+                );
+
+                if (nextIndex !== -1)
+                    return { todayName, index: nextIndex, mode: 'gap', label: 'NEXT CLASS IN', seconds: nextStart - nowSec };
+
+                return { todayName, index: -1, mode: 'done', label: 'SCHEDULE', seconds: 0 };
+            }
+
+            function updateCountdowns() {
+                document.querySelectorAll('.slot-timer-pill').forEach(el => el.remove());
+
+                const headerPill = document.getElementById('scheduleTimerPill');
+                const headerLabel = document.getElementById('scheduleTimerLabel');
+                const headerValue = document.getElementById('scheduleTimerValue');
+                if (!headerPill)
+                    return;
+
+                const state = computeScheduleTimerState();
+                const badgeEl = document.getElementById('autoStatusBadge');
+                const flashEl = document.getElementById('autoFlash');
+                const manualVisible = badgeEl && badgeEl.style.display === 'block';
+                const flashVisible = flashEl && flashEl.style.opacity === '1';
+
+                if (!state || state.mode === 'done' || manualVisible || flashVisible) {
+                    headerPill.style.display = 'none';
+                } else {
+                    headerPill.style.display = 'flex';
+                    headerLabel.textContent = state.label;
+                    headerValue.textContent = formatCountdown(state.seconds);
+                }
+
+                if (state && (state.mode === 'ongoing' || state.mode === 'starting')) {
+                    const slotEl = document.getElementById(`slot-${state.todayName}-${state.index}`);
+                    const badgeRow = slotEl && slotEl.querySelector('.slot-badge-row');
+                    if (badgeRow) {
+                        const pill = document.createElement('span');
+                        pill.className = 'slot-timer-pill';
+                        pill.textContent = formatCountdown(state.seconds);
+                        badgeRow.insertBefore(pill, badgeRow.firstChild);
+                    }
+                }
             }
 
             function highlightCurrentSlot() {
@@ -2244,12 +2406,24 @@
                     const slotEl = document.getElementById(`slot-${todayName}-${index}`);
                     if (slotEl) {
                         slotEl.classList.remove('active-now');
+                        const badgeRow = slotEl.querySelector('.slot-badge-row');
 
                         if (currentMinutes >= (start - 10) && currentMinutes < end) {
                             slotEl.classList.add('active-now');
                             activeSlots.push(slot);
                             if (!firstActiveEl)
                                 firstActiveEl = slotEl;
+
+                            if (badgeRow && !badgeRow.querySelector('.active-now-pill')) {
+                                const pill = document.createElement('span');
+                                pill.className = 'active-now-pill';
+                                pill.textContent = 'ACTIVE NOW';
+                                badgeRow.appendChild(pill);
+                            }
+                        } else if (badgeRow) {
+                            const existingPill = badgeRow.querySelector('.active-now-pill');
+                            if (existingPill)
+                                existingPill.remove();
                         }
                     }
                 }
@@ -2337,6 +2511,9 @@
             function updateBadgeToManual() {
                 const badge = document.getElementById('autoStatusBadge');
                 badge.style.display = 'block';
+                const timerPill = document.getElementById('scheduleTimerPill');
+                if (timerPill)
+                    timerPill.style.display = 'none';
             }
 
             function resetToAuto() {
@@ -2382,6 +2559,7 @@
                         timetableData = JSON.parse(event.target.result);
                         document.getElementById('smartScheduleCard').classList.remove('hidden');
                         initTimetableUI();
+                        startCountdownTimer();
                     } catch (e) {
                         alert("Invalid TT JSON");
                     }
