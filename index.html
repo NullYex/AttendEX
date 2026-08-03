@@ -1251,6 +1251,13 @@
                 white-space: nowrap;
                 position: absolute;
                 right: 0;
+                cursor: pointer;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            .schedule-timer-pill:active {
+                opacity: 0.7;
             }
 
             .schedule-timer-label {
@@ -1723,7 +1730,7 @@
                 <div class="card-header-row">
                     <div class="card-title">SMART SCHEDULE</div>
                     <div class="schedule-header-slot">
-                        <div id="scheduleTimerPill" class="schedule-timer-pill">
+                        <div id="scheduleTimerPill" class="schedule-timer-pill" onclick="toggleScheduleTimerMode()">
                             <span id="scheduleTimerLabel" class="schedule-timer-label">ENDS IN</span>
                             <span id="scheduleTimerValue" class="schedule-timer-value">00:00</span>
                         </div>
@@ -1884,6 +1891,7 @@
             let isManualOverride = false;
             let autoCheckInterval = null;
             let countdownInterval = null;
+            let scheduleTimerShowTotal = false;
             let isUpdateAvailable = false;
 
             const THEMES = [{
@@ -2464,6 +2472,7 @@
             function startCountdownTimer() {
                 if (countdownInterval)
                     clearInterval(countdownInterval);
+                scheduleTimerShowTotal = false;
                 updateCountdowns();
                 countdownInterval = setInterval(updateCountdowns, 1000);
             }
@@ -2476,6 +2485,50 @@
                 const s = Math.floor(totalSeconds % 60);
                 const pad = n => String(n).padStart(2, '0');
                 return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+            }
+
+            function toggleScheduleTimerMode() {
+                scheduleTimerShowTotal = !scheduleTimerShowTotal;
+                updateCountdowns();
+            }
+
+            function computeTotalRemainingToday() {
+                if (!timetableData)
+                    return null;
+
+                const now = new Date();
+                const dayMap = [null, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const todayName = dayMap[now.getDay()];
+
+                if (!todayName || !timetableData[todayName] || timetableData[todayName].length === 0)
+                    return null;
+
+                const slots = timetableData[todayName];
+                const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                const getSec = t => {
+                    const [h,m] = t.split(':').map(Number);
+                    return h * 3600 + m * 60;
+                }
+                ;
+
+                let lastEnd = -Infinity;
+                slots.forEach(slot => {
+                    const end = getSec(slot.endTime);
+                    if (end > lastEnd)
+                        lastEnd = end;
+                }
+                );
+
+                if (!isFinite(lastEnd) || lastEnd <= nowSec)
+                    return {
+                        seconds: 0,
+                        done: true
+                    };
+
+                return {
+                    seconds: lastEnd - nowSec,
+                    done: false
+                };
             }
 
             function computeScheduleTimerState() {
@@ -2567,6 +2620,16 @@
 
                 if (!state || state.mode === 'done' || manualVisible || flashVisible) {
                     headerPill.style.display = 'none';
+                } else if (scheduleTimerShowTotal) {
+                    const total = computeTotalRemainingToday();
+                    headerPill.style.display = 'flex';
+                    if (!total || total.done) {
+                        headerLabel.textContent = 'DAY DONE';
+                        headerValue.textContent = '--:--';
+                    } else {
+                        headerLabel.textContent = 'DAY ENDS IN';
+                        headerValue.textContent = formatCountdown(total.seconds);
+                    }
                 } else {
                     headerPill.style.display = 'flex';
                     headerLabel.textContent = state.label;
