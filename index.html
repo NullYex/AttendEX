@@ -2698,7 +2698,7 @@
                         slotEl.classList.remove('active-now');
                         const badgeRow = slotEl.querySelector('.slot-badge-row');
 
-                        if (currentMinutes >= (start - 10) && currentMinutes < end) {
+                        if (currentMinutes >= start && currentMinutes < end) {
                             slotEl.classList.add('active-now');
                             activeSlots.push(slot);
                             if (!firstActiveEl)
