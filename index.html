@@ -857,6 +857,59 @@
                 text-transform: uppercase;
             }
 
+            .human-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+                gap: 10px;
+                max-height: 360px;
+                overflow-y: auto;
+                padding: 10px 5px;
+                margin-bottom: 20px;
+                border-bottom: 1px dashed var(--border-color);
+            }
+
+            .human-grid::-webkit-scrollbar { width: 6px; }
+            .human-grid::-webkit-scrollbar-track { background: transparent; }
+            .human-grid::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+
+            .roll-btn {
+                background: rgba(125,125,125,0.02);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 12px 0;
+                text-align: center;
+                font-weight: 900;
+                font-size: 1.1rem;
+                color: var(--text-color);
+                cursor: pointer;
+                transition: all 0.15s ease-out;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            .roll-btn:hover {
+                transform: scale(1.05);
+                border-color: var(--system-accent-color);
+            }
+
+            .roll-btn:active {
+                transform: scale(0.95);
+            }
+
+            .roll-btn.present {
+                border-color: var(--accent-green);
+                color: var(--accent-green);
+                background: rgba(46, 204, 113, 0.1);
+                box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+            }
+
+            .roll-btn.absent {
+                border-color: var(--accent-red);
+                color: var(--accent-red);
+                background: rgba(231, 76, 60, 0.1);
+                box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+            }
+
             .human-list {
                 display: grid;
                 gap: 10px;
@@ -1440,7 +1493,16 @@
             .register-hint {
                 font-size: 0.7rem;
                 color: var(--text-dim);
-                margin-bottom: 10px;
+                margin-bottom: 0;
+            }
+
+            .list-controls-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+                gap: 10px;
             }
 
             #shareWhatsApp {
@@ -1770,7 +1832,14 @@
                         <div class="card-title card-title-flush">ATTENDANCE REGISTER</div>
                         <input type="text" id="searchHuman" placeholder="SEARCH DATABASE..." class="search-input">
                     </div>
-                    <div class="register-hint">> CLICK ROW TO TOGGLE STATUS</div>
+                    <div class="list-controls-row">
+                        <div class="register-hint">> CLICK ROW / NUM TO TOGGLE</div>
+                        <button id="gridToggleBtn" class="pebble-btn pebble-btn-sm" style="display: inline-flex; align-items: center; gap: 6px;" onclick="toggleGridView()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            <span>QUICK GRID</span>
+                        </button>
+                    </div>
+                    <div id="humanGrid" class="human-grid hidden"></div>
                     <div id="humanList" class="human-list"></div>
                 </div>
                 <div class="card">
@@ -1893,6 +1962,60 @@
             let countdownInterval = null;
             let scheduleTimerShowTotal = false;
             let isUpdateAvailable = false;
+            let isGridVisible = false;
+
+            function toggleGridView() {
+                isGridVisible = !isGridVisible;
+                const grid = document.getElementById('humanGrid');
+                const btn = document.getElementById('gridToggleBtn');
+                
+                if (isGridVisible) {
+                    grid.classList.remove('hidden');
+                    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg><span>HIDE GRID</span>`;
+                    btn.style.background = 'var(--system-accent-color)';
+                    btn.style.color = '#000';
+                    renderGrid(document.getElementById('searchHuman').value.toLowerCase());
+                } else {
+                    grid.classList.add('hidden');
+                    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>QUICK GRID</span>`;
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--system-accent-color)';
+                }
+            }
+
+            function renderGrid(filterTerm='') {
+                if (!isGridVisible) return;
+                const container = document.getElementById('humanGrid');
+                container.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                const isRollSearch = /^\d{1,2}$/.test(filterTerm.trim());
+
+                humans.forEach((human, index) => {
+                    if (!isHumanInCurrentBatch(index)) return;
+                    
+                    if (filterTerm) {
+                        const name = human.name.toLowerCase();
+                        const roll = String(human.rollNo).toLowerCase();
+                        const enroll = String(human.enrollmentNo).toLowerCase();
+
+                        if (isRollSearch) {
+                            if (!roll.includes(filterTerm)) return;
+                        } else {
+                            if (!name.includes(filterTerm) && !roll.includes(filterTerm) && !enroll.includes(filterTerm)) return;
+                        }
+                    }
+
+                    const btn = document.createElement('div');
+                    btn.className = 'roll-btn';
+                    btn.textContent = human.rollNo;
+                    if (attendance[index] === true) btn.classList.add('present');
+                    if (attendance[index] === false) btn.classList.add('absent');
+                    
+                    btn.onclick = () => cycleStatus(index);
+                    fragment.appendChild(btn);
+                });
+                container.appendChild(fragment);
+            }
 
             const THEMES = [{
                 id: 'dark',
@@ -2894,7 +3017,9 @@
             });
 
             document.getElementById('searchHuman').addEventListener('input', (e) => {
-                displayHumans(e.target.value.toLowerCase());
+                const term = e.target.value.toLowerCase();
+                displayHumans(term);
+                renderGrid(term);
             }
             );
             function isHumanInCurrentBatch(index) {
@@ -3028,6 +3153,7 @@
             function refreshUI() {
                 const currentSearch = document.getElementById('searchHuman').value.toLowerCase();
                 displayHumans(currentSearch);
+                renderGrid(currentSearch);
                 updateStats();
                 if (isRawViewOpen)
                     updateAndCopyRaw();
