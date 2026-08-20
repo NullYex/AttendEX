@@ -2761,6 +2761,12 @@
             function manualSelectSlot(slot, elementId) {
                 const clickedEl = document.getElementById(elementId);
                 const isActiveSlotClick = clickedEl.classList.contains('active-now');
+
+                if (isActiveSlotClick && isManualOverride) {
+                    resetToAuto();
+                    return; 
+                }
+
                 if (isActiveSlotClick && !isManualOverride) {
                     document.querySelectorAll('.timeline-slot').forEach(el => el.classList.remove('selected'));
                     clickedEl.classList.add('selected');
